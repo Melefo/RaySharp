@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31410.414
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RaySharp", "RaySharp\RaySharp.csproj", "{3C42F44F-3075-4CAE-B37F-F39EFF88AEAD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RaySharp.Tests", "RaySharp.Tests\RaySharp.Tests.csproj", "{FD2C3B40-AD68-4632-A1B5-61676F3F0A0F}"
+	ProjectSection(ProjectDependencies) = postProject
+		{3C42F44F-3075-4CAE-B37F-F39EFF88AEAD} = {3C42F44F-3075-4CAE-B37F-F39EFF88AEAD}
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3C42F44F-3075-4CAE-B37F-F39EFF88AEAD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3C42F44F-3075-4CAE-B37F-F39EFF88AEAD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3C42F44F-3075-4CAE-B37F-F39EFF88AEAD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3C42F44F-3075-4CAE-B37F-F39EFF88AEAD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FD2C3B40-AD68-4632-A1B5-61676F3F0A0F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FD2C3B40-AD68-4632-A1B5-61676F3F0A0F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FD2C3B40-AD68-4632-A1B5-61676F3F0A0F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FD2C3B40-AD68-4632-A1B5-61676F3F0A0F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {B809393F-375C-45EB-8DD9-A0FF4AF78AD7}
+	EndGlobalSection
+EndGlobal
