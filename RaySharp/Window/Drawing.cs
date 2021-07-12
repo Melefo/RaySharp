@@ -66,11 +66,6 @@ namespace RaySharp
         //public static extern void EndMode2D(void);                                                   // Ends 2D mode with custom camera
 
         //[DllImport(Constants.dllName)]
-        //public static extern void BeginMode3D(Camera3D camera);                                      // Initializes 3D mode with custom camera (3D)
-        //[DllImport(Constants.dllName)]
-        //public static extern void EndMode3D(void);                                                   // Ends 3D mode and returns to default 2D orthographic mode
-
-        //[DllImport(Constants.dllName)]
         //public static extern void BeginTextureMode(RenderTexture2D target);                          // Initializes render texture for drawing
         //[DllImport(Constants.dllName)]
         //public static extern void EndTextureMode(void);                                              // Ends drawing to render texture

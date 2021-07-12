@@ -1,4 +1,5 @@
-﻿using System.Runtime.InteropServices;
+﻿using System.Numerics;
+using System.Runtime.InteropServices;
 
 namespace RaySharp
 {
@@ -17,11 +18,11 @@ namespace RaySharp
         /// <param name="width">Width of the window</param>
         /// <param name="height">Height of the window</param>
         /// <param name="title">title of the window</param>
-        public static void Init(int width, int height, string title)
+        public static void Init(Vector2 size, string title)
         {
             if (_initialized)
                 return;
-            InitWindow(width, height, title);
+            InitWindow((int)size.X, (int)size.Y, title);
             _title = title;
             _initialized = true;
         }

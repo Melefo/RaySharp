@@ -1,4 +1,5 @@
-﻿using System.Runtime.InteropServices;
+﻿using System;
+using System.Runtime.InteropServices;
 
 namespace RaySharp
 {
@@ -35,19 +36,19 @@ namespace RaySharp
         /// <summary>
         /// Red value
         /// </summary>
-        public byte R { get; }
+        public byte R { get; internal set; }
         /// <summary>
         /// Green value
         /// </summary>
-        public byte G { get; }
+        public byte G { get; internal set; }
         /// <summary>
         /// Blue value
         /// </summary>
-        public byte B { get; }
+        public byte B { get; internal set; }
         /// <summary>
         /// Alpha value
         /// </summary>
-        public byte A { get; }
+        public byte A { get; internal set; }
 
         /// <summary>
         /// Construct a new color
@@ -63,5 +64,33 @@ namespace RaySharp
             B = b;
             A = a;
         }
+
+        /// <summary>
+        /// Linearly interpolate Color to target by t
+        /// </summary>
+        /// <param name="target">Color to interpolate</param>
+        /// <param name="t">multiplier</param>
+        public void Lerp(Color target, float t)
+        {
+            t = Math.Clamp(t, 0, 1);
+            float bk = (1 - t);
+
+            A = (byte)(A * bk + target.A * t);
+            R = (byte)(R * bk + target.R * t);
+            G = (byte)(G * bk + target.G * t);
+            B = (byte)(B * bk + target.B * t);
+        }
+
+        /// <summary>
+        /// Convert a RaySharp Color to a System.Drawing Color
+        /// </summary>
+        /// <param name="color">A RaySharp color</param>
+        public static implicit operator System.Drawing.Color(Color color) => System.Drawing.Color.FromArgb(color.A, color.R, color.G, color.B);
+
+        /// <summary>
+        /// Convert a System.Drawing Color to a RaySharp Color
+        /// </summary>
+        /// <param name="color">a System.Drawing color</param>
+        public static implicit operator Color(System.Drawing.Color color) => new Color(color.R, color.G, color.B, color.A);
     }
 }
