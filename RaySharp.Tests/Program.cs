@@ -13,12 +13,12 @@ namespace RaySharp.Tests
             //Window.Monitor = 1;
             Window.Size = new Vector2(1000, 720);
             //Window.Position = new Vector2(100, 100);
-        
-            for (int i = 0; i < 1000; i++)
-                Console.WriteLine($"hello {Window.Monitor} {Monitor.GetPhysicalSize(Window.Monitor)}");
-            await Task.Delay(2000);
+            Cursor.Enabled = true;
+            Cursor.Hidden = false;
+            while (!Window.ShouldClose)
+                Console.WriteLine($"{Cursor.IsOnScreen}");
 
             Window.Close();
         }
     }
-}
+} 
