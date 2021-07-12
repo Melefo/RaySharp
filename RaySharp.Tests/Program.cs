@@ -15,8 +15,13 @@ namespace RaySharp.Tests
             //Window.Position = new Vector2(100, 100);
             Cursor.Enabled = true;
             Cursor.Hidden = false;
+
             while (!Window.ShouldClose)
+            {
+                Window.BeginDrawing();
                 Console.WriteLine($"{Cursor.IsOnScreen}");
+                Window.EndDrawing();
+            }
 
             Window.Close();
         }
