@@ -42,8 +42,12 @@ namespace RaySharp
             BLEND_CUSTOM = 5
         }
 
-        //[DllImport(Constants.dllName)]
-        //public static extern void ClearBackground(Color color);                                      // Set background color (framebuffer clear color)
+        /// <summary>
+        /// Set background color (framebuffer clear color)
+        /// </summary>
+        /// <param name="color"></param>
+        [DllImport(Constants.dllName)]
+        public static extern void ClearBackground(Color color);
 
         /// <summary>
         /// Setup canvas (framebuffer) to start drawing
