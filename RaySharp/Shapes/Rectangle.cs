@@ -1,7 +1,7 @@
 ﻿using System.Numerics;
 using System.Runtime.InteropServices;
 
-namespace RaySharp
+namespace RaySharp.Shapes
 {
     [StructLayout(LayoutKind.Sequential)]
     public struct Rectangle
@@ -21,7 +21,13 @@ namespace RaySharp
         [DllImport(Constants.dllName)]
         private static extern void DrawRectangleLinesEx(Rectangle rec, int lineThick, Color color);
 
+        /// <summary>
+        /// Rectangle position
+        /// </summary>
         public Vector2 Location { get; }
+        /// <summary>
+        /// Rectangle size
+        /// </summary>
         public Vector2 Size { get; }
 
         public Rectangle(Vector2 location, Vector2 size)

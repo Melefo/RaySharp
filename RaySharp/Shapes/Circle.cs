@@ -1,7 +1,7 @@
 ﻿using System.Numerics;
 using System.Runtime.InteropServices;
 
-namespace RaySharp
+namespace RaySharp.Shapes
 {
     [StructLayout(LayoutKind.Sequential)]
     public struct Circle

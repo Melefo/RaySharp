@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-namespace RaySharp
+namespace RaySharp.Audio
 {
     public static class AudioDevice
     {

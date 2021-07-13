@@ -1,8 +1,10 @@
-﻿using System;
+﻿using RaySharp.Shapes;
+using RaySharp.Text;
+using System;
 using System.Numerics;
 using System.Runtime.InteropServices;
 
-namespace RaySharp
+namespace RaySharp.Textures
 {
     [StructLayout(LayoutKind.Sequential)]
     public struct Image : IDisposable
@@ -38,6 +40,15 @@ namespace RaySharp
         private static extern Image GenImagePerlinNoise(int width, int height, int offsetX, int offsetY, float scale);
         [DllImport(Constants.dllName)]
         private static extern Image GenImageCellular(int width, int height, int tileSize);
+
+        [DllImport(Constants.dllName, CharSet = CharSet.Ansi)]
+        private static extern Image ImageCopy(Image image);
+        [DllImport(Constants.dllName)]
+        private static extern Image ImageFromImage(Image image, Rectangle rec);
+        [DllImport(Constants.dllName)]
+        private static extern Image ImageText(string text, int fontSize, Color color);
+        [DllImport(Constants.dllName)]
+        private static extern Image ImageTextEx(Font font, string text, float fontSize, float spacing, Color tint);
 
         /// <summary>
         /// Pixel formats
@@ -322,6 +333,69 @@ namespace RaySharp
         public Image(Vector2 dimensions, Color color)
         {
             var image = GenImageColor((int)dimensions.X, (int)dimensions.Y, color);
+
+            Data = image.Data;
+            Dimensions = image.Dimensions;
+            Mipmaps = image.Mipmaps;
+            Format = image.Format;
+        }
+
+        /// <summary>
+        /// Create an image duplicate (useful for transformations)
+        /// </summary>
+        /// <param name="copy">Image to copy</param>
+        public Image(Image copy)
+        {
+            var image = ImageCopy(copy);
+
+            Data = image.Data;
+            Dimensions = image.Dimensions;
+            Mipmaps = image.Mipmaps;
+            Format = image.Format;
+        }
+
+        /// <summary>
+        /// Create an image from another image piece
+        /// </summary>
+        /// <param name="copy">Image to copy</param>
+        /// <param name="piece">Piece to copy</param>
+        public Image(Image copy, Rectangle piece)
+        {
+            var image = ImageFromImage(copy, piece);
+
+            Data = image.Data;
+            Dimensions = image.Dimensions;
+            Mipmaps = image.Mipmaps;
+            Format = image.Format;
+        }
+
+        /// <summary>
+        /// Create an image from text (default font)
+        /// </summary>
+        /// <param name="text">Text to transform</param>
+        /// <param name="fontSize">Size of text</param>
+        /// <param name="color">Color of text</param>
+        public Image(string text, int fontSize, Color color)
+        {
+            var image = ImageText(text, fontSize, color);
+
+            Data = image.Data;
+            Dimensions = image.Dimensions;
+            Mipmaps = image.Mipmaps;
+            Format = image.Format;
+        }
+
+        /// <summary>
+        /// Create an image from text (custom sprite font)
+        /// </summary>
+        /// <param name="font">Font of text</param>
+        /// <param name="text">Text to transform</param>
+        /// <param name="fontSize">Size of text</param>
+        /// <param name="spacing">Spacing of text</param>
+        /// <param name="tint">Color of text</param>
+        public Image(Font font, string text, float fontSize, float spacing, Color tint)
+        {
+            var image = ImageTextEx(font, text, fontSize, spacing, tint);
 
             Data = image.Data;
             Dimensions = image.Dimensions;

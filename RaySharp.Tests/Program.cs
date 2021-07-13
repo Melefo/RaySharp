@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RaySharp.Camera;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Numerics;
@@ -25,7 +26,7 @@ namespace RaySharp.Tests
 
                 camera.End();
 
-                new Rectangle(new Vector2(100, 100), new Vector2(300, 100)).DrawGradient(Color.RayWhite, Color.DarkBlue, Color.DarkGreen, Color.Gold);
+                new Shapes.Rectangle(new Vector2(100, 100), new Vector2(300, 100)).DrawGradient(Color.RayWhite, Color.DarkBlue, Color.DarkGreen, Color.Gold);
                 //new Rectangle(new Vector2(100, 100), new Vector2(300, 100)).Draw(Color.RayWhite, new Vector2(150, 50), 90);
 
                 Window.EndDrawing();
