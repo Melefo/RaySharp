@@ -66,9 +66,6 @@ namespace RaySharp
         [DllImport(Constants.dllName)]
         private static extern Vector2 GetWindowScaleDPI();
 
-        //[DllImport(Constants.dllName)]
-        //private static extern void SetWindowIcon(Image image);                                        // Set icon for window (only PLATFORM_DESKTOP)
-
         private static string _title;
         private static Vector2 _minSize;
 
@@ -206,5 +203,12 @@ namespace RaySharp
                 _minSize = value;
             }
         }
+
+        /// <summary>
+        /// Set icon for window
+        /// </summary>
+        /// <param name="image">Icon</param>
+        [DllImport(Constants.dllName, EntryPoint = "SetWindowIcon")]
+        public static extern void SetIcon(Image image);
     }
 }

@@ -82,7 +82,7 @@ namespace RaySharp
         /// Check if one specific window flag is enabled
         /// </summary>
         /// <param name="flag">Flag to check</param>
-        /// <returns></returns>
+        /// <returns>true if flag is enabled</returns>
         public static bool IsState(Flags flag) => IsWindowState((uint)flag);
         /// <summary>
         /// Set window configuration state using flags

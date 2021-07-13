@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Numerics;
 using System.Threading.Tasks;
@@ -7,12 +8,13 @@ namespace RaySharp.Tests
 {
     class Program
     {
-        static async Task Main(string[] _)
+        static void Main(string[] _)
         {
             Window.Init(new Vector2(500, 500), "test");
-            Camera3D camera = new Camera3D();
-
-            camera.Mode = Camera3D.CameraMode.FREE;
+            Camera3D camera = new()
+            {
+                Mode = Camera3D.CameraMode.FREE
+            };
 
             while (!Window.ShouldClose)
             {

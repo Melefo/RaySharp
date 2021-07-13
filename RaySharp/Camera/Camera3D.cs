@@ -15,10 +15,19 @@ namespace RaySharp
         [DllImport(Constants.dllName)]
         private static extern Matrix4x4 GetCameraMatrix(Camera3D camera);
         [DllImport(Constants.dllName)]
-        private static extern void SetCameraMode(Camera3D camera, int mode);
+        private static extern void SetCameraMode(Camera3D camera, CameraMode mode);
+        [DllImport(Constants.dllName)]
+        private static extern Vector2 GetWorldToScreen(Vector3 position, Camera3D camera);
+        [DllImport(Constants.dllName)]
+        private static extern Vector2 GetWorldToScreenEx(Vector3 position, Camera3D camera, int width, int height);
+        [DllImport(Constants.dllName)]
+        private static extern Ray GetMouseRay(Vector2 mousePosition, Camera3D camera);
 
         private CameraMode _mode;
 
+        /// <summary>
+        /// Camera system modes
+        /// </summary>
         public enum CameraMode : int
         {
             CUSTOM = 0,
@@ -28,6 +37,9 @@ namespace RaySharp
             THIRD_PERSON = 4
         }
 
+        /// <summary>
+        /// Camera projection
+        /// </summary>
         public enum CameraProjection : int
         {
             PERSPECTIVE = 0,
@@ -66,7 +78,7 @@ namespace RaySharp
             get => _mode;
             set
             {
-                SetCameraMode(this, (int)value);
+                SetCameraMode(this, value);
                 _mode = value;
             }
         }
@@ -112,5 +124,27 @@ namespace RaySharp
         {
             UpdateCamera(ref this);
         }
+
+        /// <summary>
+        /// Returns the screen space position for a 3d world space position
+        /// </summary>
+        /// <param name="position">3d world space position</param>
+        /// <returns>Screen space position</returns>
+        public Vector2 GetWorldToScreen(Vector3 position) => GetWorldToScreen(position, this);
+        /// <summary>
+        /// Returns size position for a 3d world space position
+        /// </summary>
+        /// <param name="position">3d world space position</param>
+        /// <param name="dimension">Size to check</param>
+        /// <returns>Size position</returns>
+        public Vector2 GetWorldToScreenEx(Vector3 position, Vector2 dimension) => GetWorldToScreenEx(position, this, (int)dimension.X, (int)dimension.Y);
+
+        /// <summary>
+        /// Returns a ray trace from mouse position
+        /// </summary>
+        /// <param name="mousePosition">Position of mouse</param>
+        /// <returns>Ray trace</returns>
+        public Ray GetMouseRay(Vector2 mousePosition) => GetMouseRay(mousePosition, this);
+
     }
 }

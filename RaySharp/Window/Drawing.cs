@@ -6,9 +6,6 @@ namespace RaySharp
     public static partial class Window
     {
         [DllImport(Constants.dllName)]
-        private static extern void BeginBlendMode(int mode);
-
-        [DllImport(Constants.dllName)]
         private static extern void BeginScissorMode(int x, int y, int width, int height);
 
         /// <summary>
@@ -61,11 +58,6 @@ namespace RaySharp
         public static extern void EndDrawing();
 
         //[DllImport(Constants.dllName)]
-        //public static extern void BeginMode2D(Camera2D camera);                                      // Initialize 2D mode with custom camera (2D)
-        //[DllImport(Constants.dllName)]
-        //public static extern void EndMode2D(void);                                                   // Ends 2D mode with custom camera
-
-        //[DllImport(Constants.dllName)]
         //public static extern void BeginTextureMode(RenderTexture2D target);                          // Initializes render texture for drawing
         //[DllImport(Constants.dllName)]
         //public static extern void EndTextureMode(void);                                              // Ends drawing to render texture
@@ -79,7 +71,9 @@ namespace RaySharp
         /// Begin blending mode (alpha, additive, multiplied)
         /// </summary>
         /// <param name="mode">Blend mode to start</param>
-        public static void BeginBlendMode(BlendMode mode) => BeginBlendMode((int)mode);
+        [DllImport(Constants.dllName)]
+        public static extern void BeginBlendMode(BlendMode mode);
+
         /// <summary>
         /// End blending mode (reset to default: alpha blending)
         /// </summary>
