@@ -50,6 +50,51 @@ namespace RaySharp.Textures
         [DllImport(Constants.dllName)]
         private static extern Image ImageTextEx(Font font, string text, float fontSize, float spacing, Color tint);
 
+        [DllImport(Constants.dllName)]
+        private static extern void ImageFormat(ref Image image, PixelFormat newFormat);                                                     // Convert image data to desired format
+        [DllImport(Constants.dllName)]
+        private static extern void ImageToPOT(ref Image image, Color fill);                                                         // Convert image to POT (power-of-two)
+        [DllImport(Constants.dllName)]
+        private static extern void ImageCrop(ref Image image, Rectangle crop);                                                      // Crop an image to a defined rectangle
+        [DllImport(Constants.dllName)]
+        private static extern void ImageAlphaCrop(ref Image image, float threshold);                                                // Crop image depending on alpha value
+        [DllImport(Constants.dllName)]
+        private static extern void ImageAlphaClear(ref Image image, Color color, float threshold);                                  // Clear alpha channel to desired color
+        [DllImport(Constants.dllName)]
+        private static extern void ImageAlphaMask(ref Image image, Image alphaMask);                                                // Apply alpha mask to image
+        [DllImport(Constants.dllName)]
+        private static extern void ImageAlphaPremultiply(ref Image image);                                                          // Premultiply alpha channel
+        [DllImport(Constants.dllName)]
+        private static extern void ImageResize(ref Image image, int newWidth, int newHeight);                                       // Resize image (Bicubic scaling algorithm)
+        [DllImport(Constants.dllName)]
+        private static extern void ImageResizeNN(ref Image image, int newWidth, int newHeight);                                      // Resize image (Nearest-Neighbor scaling algorithm)
+        [DllImport(Constants.dllName)]
+        private static extern void ImageResizeCanvas(ref Image image, int newWidth, int newHeight, int offsetX, int offsetY, Color fill);  // Resize canvas and fill with color
+        [DllImport(Constants.dllName)]
+        private static extern void ImageMipmaps(ref Image image);                                                                   // Generate all mipmap levels for a provided image
+        [DllImport(Constants.dllName)]
+        private static extern void ImageDither(ref Image image, int rBpp, int gBpp, int bBpp, int aBpp);                            // Dither image data to 16bpp or lower (Floyd-Steinberg dithering)
+        [DllImport(Constants.dllName)]
+        private static extern void ImageFlipVertical(ref Image image);                                                              // Flip image vertically
+        [DllImport(Constants.dllName)]
+        private static extern void ImageFlipHorizontal(ref Image image);                                                            // Flip image horizontally
+        [DllImport(Constants.dllName)]
+        private static extern void ImageRotateCW(ref Image image);                                                                  // Rotate image clockwise 90deg
+        [DllImport(Constants.dllName)]
+        private static extern void ImageRotateCCW(ref Image image);                                                                 // Rotate image counter-clockwise 90deg
+        [DllImport(Constants.dllName)]
+        private static extern void ImageColorTint(ref Image image, Color color);                                                    // Modify image color: tint
+        [DllImport(Constants.dllName)]
+        private static extern void ImageColorInvert(ref Image image);                                                               // Modify image color: invert
+        [DllImport(Constants.dllName)]
+        private static extern void ImageColorGrayscale(ref Image image);                                                            // Modify image color: grayscale
+        [DllImport(Constants.dllName)]
+        private static extern void ImageColorContrast(ref Image image, float contrast);                                             // Modify image color: contrast (-100 to 100)
+        [DllImport(Constants.dllName)]
+        private static extern void ImageColorBrightness(ref Image image, int brightness);                                           // Modify image color: brightness (-255 to 255)
+        [DllImport(Constants.dllName)]
+        private static extern void ImageColorReplace(ref Image image, Color color, Color replace);                                  // Modify image color: replace color
+
         /// <summary>
         /// Pixel formats
         /// </summary>
@@ -427,5 +472,118 @@ namespace RaySharp.Textures
                 return ExportImageAsCode(this, filename);
             return ExportImage(this, filename);
         }
+
+        /// <summary>
+        /// Convert image data to desired format
+        /// </summary>
+        /// <param name="newFormat">Desired Format</param>
+        public void ConvertFormat(PixelFormat newFormat) => ImageFormat(ref this, newFormat);
+
+        /// <summary>
+        /// Convert image to POT (power-of-two)
+        /// </summary>
+        /// <param name="fill">Color to fill with</param>
+        public void ToPOT(Color fill) => ImageToPOT(ref this, fill);
+        /// <summary>
+        /// Crop an image to a defined rectangle
+        /// </summary>
+        /// <param name="crop">Position and size of crop</param>
+        public void Crop(Rectangle crop) => ImageCrop(ref this, crop);
+        /// <summary>
+        /// Crop image depending on alpha value
+        /// </summary>
+        /// <param name="threshold">Alpha value</param>
+        public void AlphaCrop(float threshold) => ImageAlphaCrop(ref this, threshold);
+        /// <summary>
+        /// Clear alpha channel to desired color
+        /// </summary>
+        /// <param name="color">Desired color</param>
+        /// <param name="threshold">Alpha value</param>
+        public void AlphaClear(Color color, float threshold) => ImageAlphaClear(ref this, color, threshold);
+        /// <summary>
+        /// Apply alpha mask to image
+        /// </summary>
+        /// <param name="alphaMask">Alpha mask</param>
+        public void AlphaMask(Image alphaMask) => ImageAlphaMask(ref this, alphaMask);
+        /// <summary>
+        /// Premultiply alpha channel
+        /// </summary>
+        /// <param name="image"></param>
+        public void AlphaPremultiply() => ImageAlphaPremultiply(ref this);
+        /// <summary>
+        /// Resize image (Bicubic scaling algorithm)
+        /// </summary>
+        /// <param name="dimensions">New dimensions</param>
+        public void Resize(Vector2 dimensions) => ImageResize(ref this, (int)dimensions.X, (int)dimensions.Y);
+        /// <summary>
+        ///  Resize image (Nearest-Neighbor scaling algorithm)
+        /// </summary>
+        /// <param name="dimensions">New dimensions</param>
+        public void ResizeNN(Vector2 dimensions) => ImageResizeNN(ref this, (int)dimensions.X, (int)dimensions.Y);
+        /// <summary>
+        /// Resize canvas and fill with color
+        /// </summary>
+        /// <param name="dimensions">New dimensions</param>
+        /// <param name="offset">Offset possition</param>
+        /// <param name="fill">Color to fill with</param>
+        public void ResizeCanvas(Vector2 dimensions, Vector2 offset, Color fill) => ImageResizeCanvas(ref this, (int)dimensions.X, (int)dimensions.Y, (int)dimensions.X, (int)dimensions.Y, fill);
+        /// <summary>
+        /// Generate all mipmap levels for a provided image
+        /// </summary>
+        public void GenerateMipmaps() => ImageMipmaps(ref this);
+
+        /// <summary>
+        /// Dither image data to 16bpp or lower (Floyd-Steinberg dithering)
+        /// </summary>
+        /// <param name="rBpp">Red Bpp</param>
+        /// <param name="gBpp">Green Bpp</param>
+        /// <param name="bBpp">Blue Bpp</param>
+        /// <param name="aBpp">alpha Bpp</param>
+        public void Dither(int rBpp, int gBpp, int bBpp, int aBpp) => ImageDither(ref this, rBpp, gBpp, bBpp, aBpp);
+        /// <summary>
+        /// Flip image vertically
+        /// </summary>
+        public void FlipVertical() => ImageFlipVertical(ref this);
+        /// <summary>
+        /// Flip image horizontally
+        /// </summary>
+        public void FlipHorizontal() => ImageFlipHorizontal(ref this);
+        /// <summary>
+        /// Rotate image clockwise 90deg
+        /// </summary>
+        public void RotateCW() => ImageRotateCW(ref this);
+        /// <summary>
+        /// Rotate image counter-clockwise 90deg
+        /// </summary>
+        public void RotateCCW() => ImageRotateCCW(ref this);
+        /// <summary>
+        /// Modify image color: tint
+        /// </summary>
+        /// <param name="color">Tint color</param>
+        public void ColorTint(Color color) => ImageColorTint(ref this, color);
+        /// <summary>
+        /// Modify image color: invert
+        /// </summary>
+        public void ColorInvert() => ImageColorInvert(ref this);
+        /// <summary>
+        /// Modify image color: grayscale
+        /// </summary>
+        public void ColorGrayscale() => ImageColorGrayscale(ref this);
+        /// <summary>
+        /// Modify image color: contrast (-100 to 100)
+        /// </summary>
+        /// <param name="contrast">Contrast value</param>
+        public void ColorContrast(float contrast) => ImageColorContrast(ref this, contrast);
+        /// <summary>
+        /// Modify image color: brightness (-255 to 255)
+        /// </summary>
+        /// <param name="brightness">Brightness value</param>
+        public void ColorBrightness(int brightness) => ImageColorBrightness(ref this, brightness);
+        /// <summary>
+        /// Modify image color: replace color
+        /// </summary>
+        /// <param name="color">Color to replace</param>
+        /// <param name="replace">Overriding color</param>
+        public void ColorReplace(Color color, Color replace) => ImageColorReplace(ref this, color, replace);
     }
 }

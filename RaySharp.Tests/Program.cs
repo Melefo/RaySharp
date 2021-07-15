@@ -1,4 +1,5 @@
 ﻿using RaySharp.Camera;
+using RaySharp.Textures;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -16,6 +17,10 @@ namespace RaySharp.Tests
             {
                 Mode = Camera3D.CameraMode.FREE
             };
+
+            Image test = new Image("test.png");
+            test.ColorGrayscale();
+            test.Export("grey.png");
 
             while (!Window.ShouldClose)
             {

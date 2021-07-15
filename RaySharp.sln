@@ -13,7 +13,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{A07FA458-89BB-43D3-A4B8-F8876223C507}"
 	ProjectSection(SolutionItems) = preProject
 		.gitignore = .gitignore
-		E:\WindowsDocs\Téléchargements\raylib - cheatsheet - todo.html = E:\WindowsDocs\Téléchargements\raylib - cheatsheet - todo.html
+		raylib - cheatsheet - todo.html = raylib - cheatsheet - todo.html
 	EndProjectSection
 EndProject
 Global
