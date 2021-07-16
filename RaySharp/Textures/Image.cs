@@ -51,49 +51,66 @@ namespace RaySharp.Textures
         private static extern Image ImageTextEx(Font font, string text, float fontSize, float spacing, Color tint);
 
         [DllImport(Constants.dllName)]
-        private static extern void ImageFormat(ref Image image, PixelFormat newFormat);                                                     // Convert image data to desired format
+        private static extern void ImageFormat(ref Image image, PixelFormat newFormat);
         [DllImport(Constants.dllName)]
-        private static extern void ImageToPOT(ref Image image, Color fill);                                                         // Convert image to POT (power-of-two)
+        private static extern void ImageToPOT(ref Image image, Color fill);
         [DllImport(Constants.dllName)]
-        private static extern void ImageCrop(ref Image image, Rectangle crop);                                                      // Crop an image to a defined rectangle
+        private static extern void ImageCrop(ref Image image, Rectangle crop);
         [DllImport(Constants.dllName)]
-        private static extern void ImageAlphaCrop(ref Image image, float threshold);                                                // Crop image depending on alpha value
+        private static extern void ImageAlphaCrop(ref Image image, float threshold);
         [DllImport(Constants.dllName)]
-        private static extern void ImageAlphaClear(ref Image image, Color color, float threshold);                                  // Clear alpha channel to desired color
+        private static extern void ImageAlphaClear(ref Image image, Color color, float threshold);
         [DllImport(Constants.dllName)]
-        private static extern void ImageAlphaMask(ref Image image, Image alphaMask);                                                // Apply alpha mask to image
+        private static extern void ImageAlphaMask(ref Image image, Image alphaMask);
         [DllImport(Constants.dllName)]
-        private static extern void ImageAlphaPremultiply(ref Image image);                                                          // Premultiply alpha channel
+        private static extern void ImageAlphaPremultiply(ref Image image);
         [DllImport(Constants.dllName)]
-        private static extern void ImageResize(ref Image image, int newWidth, int newHeight);                                       // Resize image (Bicubic scaling algorithm)
+        private static extern void ImageResize(ref Image image, int newWidth, int newHeight);
         [DllImport(Constants.dllName)]
-        private static extern void ImageResizeNN(ref Image image, int newWidth, int newHeight);                                      // Resize image (Nearest-Neighbor scaling algorithm)
+        private static extern void ImageResizeNN(ref Image image, int newWidth, int newHeight);
         [DllImport(Constants.dllName)]
-        private static extern void ImageResizeCanvas(ref Image image, int newWidth, int newHeight, int offsetX, int offsetY, Color fill);  // Resize canvas and fill with color
+        private static extern void ImageResizeCanvas(ref Image image, int newWidth, int newHeight, int offsetX, int offsetY, Color fill);
         [DllImport(Constants.dllName)]
-        private static extern void ImageMipmaps(ref Image image);                                                                   // Generate all mipmap levels for a provided image
+        private static extern void ImageMipmaps(ref Image image);
         [DllImport(Constants.dllName)]
-        private static extern void ImageDither(ref Image image, int rBpp, int gBpp, int bBpp, int aBpp);                            // Dither image data to 16bpp or lower (Floyd-Steinberg dithering)
+        private static extern void ImageDither(ref Image image, int rBpp, int gBpp, int bBpp, int aBpp);
         [DllImport(Constants.dllName)]
-        private static extern void ImageFlipVertical(ref Image image);                                                              // Flip image vertically
+        private static extern void ImageFlipVertical(ref Image image);
         [DllImport(Constants.dllName)]
-        private static extern void ImageFlipHorizontal(ref Image image);                                                            // Flip image horizontally
+        private static extern void ImageFlipHorizontal(ref Image image);
         [DllImport(Constants.dllName)]
-        private static extern void ImageRotateCW(ref Image image);                                                                  // Rotate image clockwise 90deg
+        private static extern void ImageRotateCW(ref Image image);
         [DllImport(Constants.dllName)]
-        private static extern void ImageRotateCCW(ref Image image);                                                                 // Rotate image counter-clockwise 90deg
+        private static extern void ImageRotateCCW(ref Image image);
         [DllImport(Constants.dllName)]
-        private static extern void ImageColorTint(ref Image image, Color color);                                                    // Modify image color: tint
+        private static extern void ImageColorTint(ref Image image, Color color);
         [DllImport(Constants.dllName)]
-        private static extern void ImageColorInvert(ref Image image);                                                               // Modify image color: invert
+        private static extern void ImageColorInvert(ref Image image);
         [DllImport(Constants.dllName)]
-        private static extern void ImageColorGrayscale(ref Image image);                                                            // Modify image color: grayscale
+        private static extern void ImageColorGrayscale(ref Image image);
         [DllImport(Constants.dllName)]
-        private static extern void ImageColorContrast(ref Image image, float contrast);                                             // Modify image color: contrast (-100 to 100)
+        private static extern void ImageColorContrast(ref Image image, float contrast);
         [DllImport(Constants.dllName)]
-        private static extern void ImageColorBrightness(ref Image image, int brightness);                                           // Modify image color: brightness (-255 to 255)
+        private static extern void ImageColorBrightness(ref Image image, int brightness);
         [DllImport(Constants.dllName)]
-        private static extern void ImageColorReplace(ref Image image, Color color, Color replace);                                  // Modify image color: replace color
+        private static extern void ImageColorReplace(ref Image image, Color color, Color replace);
+
+        [DllImport(Constants.dllName)]
+        private static extern void ImageClearBackground(ref Image dst, Color color);
+        [DllImport(Constants.dllName)]
+        private static extern void ImageDrawPixelV(ref Image dst, Vector2 position, Color color);
+        [DllImport(Constants.dllName)]
+        private static extern void ImageDrawLineV(ref Image dst, Vector2 start, Vector2 end, Color color);
+        [DllImport(Constants.dllName)]
+        private static extern void ImageDrawCircleV(ref Image dst, Vector2 center, int radius, Color color);
+        [DllImport(Constants.dllName)]
+        private static extern void ImageDrawRectangleRec(ref Image dst, Rectangle rec, Color color);
+        [DllImport(Constants.dllName)]
+        private static extern void ImageDrawRectangleLines(ref Image dst, Rectangle rec, int thick, Color color);
+        [DllImport(Constants.dllName)]
+        private static extern void ImageDraw(ref Image dst, Image src, Rectangle srcRec, Rectangle dstRec, Color tint);
+        [DllImport(Constants.dllName)]
+        private static extern void ImageDrawTextEx(ref Image dst, Font font, string text, Vector2 position, float fontSize, float spacing, Color tint);
 
         /// <summary>
         /// Pixel formats
@@ -526,7 +543,7 @@ namespace RaySharp.Textures
         /// <param name="dimensions">New dimensions</param>
         /// <param name="offset">Offset possition</param>
         /// <param name="fill">Color to fill with</param>
-        public void ResizeCanvas(Vector2 dimensions, Vector2 offset, Color fill) => ImageResizeCanvas(ref this, (int)dimensions.X, (int)dimensions.Y, (int)dimensions.X, (int)dimensions.Y, fill);
+        public void ResizeCanvas(Vector2 dimensions, Vector2 offset, Color fill) => ImageResizeCanvas(ref this, (int)dimensions.X, (int)dimensions.Y, (int)offset.X, (int)offset.Y, fill);
         /// <summary>
         /// Generate all mipmap levels for a provided image
         /// </summary>
@@ -585,5 +602,59 @@ namespace RaySharp.Textures
         /// <param name="color">Color to replace</param>
         /// <param name="replace">Overriding color</param>
         public void ColorReplace(Color color, Color replace) => ImageColorReplace(ref this, color, replace);
+
+        /// <summary>
+        /// Clear image background with given color
+        /// </summary>
+        /// <param name="color">New background color</param>
+        public void ClearBackground(Color color) => ImageClearBackground(ref this, color);
+        /// <summary>
+        /// Draw pixel within an image
+        /// </summary>
+        /// <param name="pixel">Pixel to draw</param>
+        public void DrawPixel(Pixel pixel) => ImageDrawPixelV(ref this, pixel.Position, pixel.Color);
+        /// <summary>
+        /// Draw line within an image
+        /// </summary>
+        /// <param name="line">Line to draw</param>
+        /// <param name="color">Color of line</param>
+        public void DrawLine(Line line, Color color) => ImageDrawLineV(ref this, line.Start, line.End, color);
+        /// <summary>
+        /// Draw circle within an image
+        /// </summary>
+        /// <param name="circle">Circle to draw</param>
+        /// <param name="color">Color of Circle</param>
+        public void DrawCircle(Circle circle, Color color) => ImageDrawCircleV(ref this, circle.Center, (int)circle.Radius, color);
+        /// <summary>
+        /// Draw rectangle within an image
+        /// </summary>
+        /// <param name="rec">Rectangle to draw</param>
+        /// <param name="color">Color of Rectangle</param>
+        public void DrawRectangle(Rectangle rec, Color color) => ImageDrawRectangleRec(ref this, rec, color);
+        /// <summary>
+        /// Draw rectangle lines within an image
+        /// </summary>
+        /// <param name="rec">Rectangle to draw</param>
+        /// <param name="thick">Thickness of lines</param>
+        /// <param name="color">Color of Rectangle lines</param>
+        public void DrawRectangleLines(Rectangle rec, int thick, Color color) => ImageDrawRectangleLines(ref this, rec, thick, color);
+        /// <summary>
+        /// Draw a source image within a destination image (tint applied to source)
+        /// </summary>
+        /// <param name="src">Image to draw</param>
+        /// <param name="srcRec">Selection of image to draw</param>
+        /// <param name="dstRec">Selection where to draw</param>
+        /// <param name="tint">Tint to apply to src</param>
+        public void DrawImage(Image src, Rectangle srcRec, Rectangle dstRec, Color tint) => ImageDraw(ref this, src, srcRec, dstRec, tint);
+        /// <summary>
+        /// Draw text (custom sprite font) within an image (destination)
+        /// </summary>
+        /// <param name="font">Font</param>
+        /// <param name="text">Text to draw</param>
+        /// <param name="position">Where to draw Text</param>
+        /// <param name="fontSize">Text size</param>
+        /// <param name="spacing">Spacing size</param>
+        /// <param name="tint">Color of text</param>
+        public void DrawText(Font font, string text, Vector2 position, float fontSize, float spacing, Color tint) => ImageDrawTextEx(ref this, font, text, position, fontSize, spacing, tint);
     }
 }
