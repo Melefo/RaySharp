@@ -123,7 +123,8 @@ namespace RaySharp.Textures
         [DllImport(Constants.dllName)]
         private static extern Texture2D LoadTextureCubemap(Image image, int layout);
 
-
+        [DllImport(Constants.dllName)]
+        private static extern Image GetTextureData(Texture2D texture);
 
         /// <summary>
         /// Pixel formats
@@ -479,6 +480,20 @@ namespace RaySharp.Textures
         }
 
         /// <summary>
+        /// Get pixel data from GPU texture and return an Image
+        /// </summary>
+        /// <param name="texture">A Texture</param>
+        public Image(Texture2D texture)
+        {
+            var image = GetTextureData(texture);
+
+            Data = image.Data;
+            Dimensions = image.Dimensions;
+            Mipmaps = image.Mipmaps;
+            Format = image.Format;
+        }
+
+        /// <summary>
         /// Unload image from CPU memory (RAM)
         /// </summary>
         public void Dispose()
@@ -698,5 +713,11 @@ namespace RaySharp.Textures
         /// <returns>Texture of Cubemap</returns>
         public Texture2D LoadCubemap(int layout) => LoadTextureCubemap(this, layout);
 
+        /// <summary>
+        /// Get pixel data from screen buffer and return an Image (screenshot)
+        /// </summary>
+        /// <returns>A screenshot of current screen</returns>
+        [DllImport(Constants.dllName)]
+        public static extern Image GetScreenData();
     }
 }

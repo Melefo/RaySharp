@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RaySharp.Shapes;
+using System;
 using System.Runtime.InteropServices;
 using static RaySharp.Textures.Image;
 
@@ -13,6 +14,11 @@ namespace RaySharp.Textures
         private static extern Texture2D LoadTextureFromImage(Image image);
         [DllImport(Constants.dllName)]
         private static extern void UnloadTexture(Texture2D texture);
+
+        [DllImport(Constants.dllName)]
+        private static extern void UpdateTexture(Texture2D texture, IntPtr pixels);
+        [DllImport(Constants.dllName)]
+        private static extern void UpdateTextureRec(Texture2D texture, Rectangle rec, IntPtr pixels);
 
         /// <summary>
         /// OpenGL texture id
@@ -77,5 +83,17 @@ namespace RaySharp.Textures
             Mipmaps = 0;
             Format = 0;
         }
+
+        /// <summary>
+        /// Update GPU texture with new data
+        /// </summary>
+        /// <param name="pixels">New data</param>
+        public void Update(IntPtr pixels) => UpdateTexture(this, pixels);
+        /// <summary>
+        /// Update GPU texture rectangle with new data
+        /// </summary>
+        /// <param name="rec">Rectangle inside Texture</param>
+        /// <param name="pixels">New Data</param>
+        public void UpdateTextureRec(Rectangle rec, IntPtr pixels) => UpdateTextureRec(this, rec, pixels);
     }
 }
