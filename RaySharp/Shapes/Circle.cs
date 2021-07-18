@@ -17,6 +17,11 @@ namespace RaySharp.Shapes
         [DllImport(Constants.dllName)]
         private static extern void DrawCircleSectorLines(Vector2 center, float radius, float startAngle, float endAngle, int segments, Color color);
 
+        [DllImport(Constants.dllName)]
+        private static extern bool CheckCollisionCircles(Vector2 center1, float radius1, Vector2 center2, float radius2);
+        [DllImport(Constants.dllName)]
+        private static extern bool CheckCollisionCircleRec(Vector2 center, float radius, Rectangle rec);
+
         /// <summary>
         /// Center of circle
         /// </summary>
@@ -73,5 +78,18 @@ namespace RaySharp.Shapes
         /// <param name="engAngle">End of piece</param>
         /// <param name="segments">Number of segments to make piece</param>
         public void DrawSectorLines(Color color, float startAngle, float engAngle, int segments) => DrawCircleSectorLines(Center, Radius, startAngle, engAngle, segments, color);
+
+        /// <summary>
+        /// Check collision between two circles
+        /// </summary>
+        /// <param name="circle">Another circle</param>
+        /// <returns>true if the two circles collide</returns>
+        public bool CheckCollisionCircle(Circle circle) => CheckCollisionCircles(Center, Radius, circle.Center, circle.Radius);
+        /// <summary>
+        /// Check collision between circle and rectangle
+        /// </summary>
+        /// <param name="rec">A rectangle</param>
+        /// <returns>true if the Circle and the Rectangle collide</returns>
+        public bool CheckCollisionRec(Rectangle rec) => CheckCollisionCircleRec(Center, Radius, rec);
     }
 }

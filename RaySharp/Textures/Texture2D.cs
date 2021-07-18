@@ -28,17 +28,21 @@ namespace RaySharp.Textures
         private static extern void SetTextureWrap(Texture2D texture, TextureWrap wrap);
 
         [DllImport(Constants.dllName)]
-        private static extern void DrawTextureEx(Texture2D texture, Vector2 position, float rotation, float scale, Color tint);  // Draw a Texture2D
+        private static extern void DrawTextureEx(Texture2D texture, Vector2 position, float rotation, float scale, Color tint);
         [DllImport(Constants.dllName)]
-        private static extern void DrawTextureRec(Texture2D texture, Rectangle source, Vector2 position, Color tint);            // Draw a part of a texture defined by a rectangle
+        private static extern void DrawTextureRec(Texture2D texture, Rectangle source, Vector2 position, Color tint);
         [DllImport(Constants.dllName)]
-        private static extern void DrawTextureQuad(Texture2D texture, Vector2 tiling, Vector2 offset, Rectangle quad, Color tint);  // Draw texture quad with tiling and offset parameters
+        private static extern void DrawTextureQuad(Texture2D texture, Vector2 tiling, Vector2 offset, Rectangle quad, Color tint);
         [DllImport(Constants.dllName)]
-        private static extern void DrawTextureTiled(Texture2D texture, Rectangle source, Rectangle dest, Vector2 origin, float rotation, float scale, Color tint);      // Draw part of a texture (defined by a rectangle) with rotation and scale tiled into dest.
+        private static extern void DrawTextureTiled(Texture2D texture, Rectangle source, Rectangle dest, Vector2 origin, float rotation, float scale, Color tint);
         [DllImport(Constants.dllName)]
-        private static extern void DrawTextureNPatch(Texture2D texture, NPatchInfo nPatchInfo, Rectangle dest, Vector2 origin, float rotation, Color tint);   // Draws a texture (or part of it) that stretches or shrinks nicely
+        private static extern void DrawTextureNPatch(Texture2D texture, NPatchInfo nPatchInfo, Rectangle dest, Vector2 origin, float rotation, Color tint);
         [DllImport(Constants.dllName)]
-        private static extern void DrawTexturePoly(Texture2D texture, Vector2 center, Vector2[] points, Vector2[] texcoords, int pointsCount, Color tint);      // Draw a textured polygon
+        private static extern void DrawTexturePoly(Texture2D texture, Vector2 center, Vector2[] points, Vector2[] texcoords, int pointsCount, Color tint);
+
+        [DllImport(Constants.dllName)]
+        private static extern void SetShapesTexture(Texture2D texture, Rectangle source);
+
 
         /// <summary>
         /// Texture parameters: filter mode
@@ -244,5 +248,12 @@ namespace RaySharp.Textures
         /// <param name="texcoords">Array of Coordinates</param>
         /// <param name="pointsCount">Number of points</param>
         public void DrawPoly(Color tint, Vector2 center, Vector2[] points, Vector2[] texcoords, int pointsCount) => DrawTexturePoly(this, center, points, texcoords, pointsCount, tint);
+
+        /// <summary>
+        /// Set texture and rectangle to be used on shapes drawing
+        /// </summary>
+        /// <param name="source">Texture part to use</param>
+        /// <remarks>NOTE: It can be useful when using basic shapes and one single font, defining a font char white rectangle would allow drawing everything in a single draw call</remarks>
+        public void SetShapesTexture(Rectangle source) => SetShapesTexture(this, source);
     }
 }

@@ -9,17 +9,23 @@ namespace RaySharp.Shapes
         [DllImport(Constants.dllName)]
         private static extern void DrawRectanglePro(Rectangle rec, Vector2 origin, float rotation, Color color);
         [DllImport(Constants.dllName)]
-        private static extern void DrawRectangleGradientV(int posX, int posY, int width, int height, Color color1, Color color2); // Draw a vertical-gradient-filled rectangle
+        private static extern void DrawRectangleGradientV(int posX, int posY, int width, int height, Color color1, Color color2);
         [DllImport(Constants.dllName)]
-        private static extern void DrawRectangleGradientH(int posX, int posY, int width, int height, Color color1, Color color2); // Draw a horizontal-gradient-filled rectangle
+        private static extern void DrawRectangleGradientH(int posX, int posY, int width, int height, Color color1, Color color2);
         [DllImport(Constants.dllName)]
-        private static extern void DrawRectangleGradientEx(Rectangle rec, Color col1, Color col2, Color col3, Color col4);        // Draw a gradient-filled rectangle with custom vertex colors
+        private static extern void DrawRectangleGradientEx(Rectangle rec, Color col1, Color col2, Color col3, Color col4);
         [DllImport(Constants.dllName)]
-        private static extern void DrawRectangleRounded(Rectangle rec, float roundness, int segments, Color color);               // Draw rectangle with rounded edges
+        private static extern void DrawRectangleRounded(Rectangle rec, float roundness, int segments, Color color);
         [DllImport(Constants.dllName)]
-        private static extern void DrawRectangleRoundedLines(Rectangle rec, float roundness, int segments, int lineThick, Color color); // Draw rectangle with rounded edges outline
+        private static extern void DrawRectangleRoundedLines(Rectangle rec, float roundness, int segments, int lineThick, Color color);
         [DllImport(Constants.dllName)]
         private static extern void DrawRectangleLinesEx(Rectangle rec, int lineThick, Color color);
+
+        [DllImport(Constants.dllName)]
+        private static extern bool CheckCollisionRecs(Rectangle rec1, Rectangle rec2);
+
+        [DllImport(Constants.dllName)]
+        private static extern Rectangle GetCollisionRec(Rectangle rec1, Rectangle rec2);
 
         /// <summary>
         /// Rectangle position
@@ -87,5 +93,20 @@ namespace RaySharp.Shapes
         /// <param name="segments">Number of segments to make rounded angle</param>
         /// <param name="lineThick">Thickness of lines</param>
         public void DrawRoundedLines(Color color, float roundness, int segments, int lineThick = 1) => DrawRectangleRoundedLines(this, roundness, segments, lineThick, color);
+
+        /// <summary>
+        /// Check collision between two rectangles
+        /// </summary>
+        /// <param name="rec">Another rectangle</param>
+        /// <returns>true if the two rectangles collide</returns>
+        public bool CheckCollisionRec(Rectangle rec) => CheckCollisionRecs(this, rec);
+
+        /// <summary>
+        /// Get collision rectangle for two rectangles collision
+        /// </summary>
+        /// <param name="rec">Another rectangle</param>
+        /// <returns>Rectangle representing collision</returns>
+        public Rectangle GetCollisionRec(Rectangle rec) => GetCollisionRec(this, rec);
+
     }
 }

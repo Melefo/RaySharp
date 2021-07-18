@@ -14,6 +14,8 @@ namespace RaySharp.Shapes
         private extern static void DrawLineBezier(Vector2 startPos, Vector2 endPos, float thick, Color color);
         [DllImport(Constants.dllName)]
         private extern static void DrawLineBezierQuad(Vector2 startPos, Vector2 endPos, Vector2 controlPos, float thick, Color color);
+        [DllImport(Constants.dllName)]
+        private extern static bool CheckCollisionLines(Vector2 startPos1, Vector2 endPos1, Vector2 startPos2, Vector2 endPos2, ref Vector2 collisionPoint);
 
         /// <summary>
         /// Start position of line
@@ -50,6 +52,15 @@ namespace RaySharp.Shapes
         /// <param name="color">Color of line</param>
         /// <param name="thickness">Thickness of line</param>
         public void DrawBezierQuad(Vector2 controlPosition, Color color, float thickness = 1) => DrawLineBezierQuad(Start, End, controlPosition, thickness, color);
+
+        /// <summary>
+        /// Check the collision between two lines defined by two points each, returns collision point by reference
+        /// </summary>
+        /// <param name="line">Another line</param>
+        /// <param name="collisionPoint">Collision point between the two lines</param>
+        /// <returns>true if the two lines collide</returns>
+        public bool CheckCollisionLine(Line line, ref Vector2 collisionPoint) => CheckCollisionLines(Start, End, line.Start, line.End, ref collisionPoint);
+
     }
 
     public static class LineExtension
