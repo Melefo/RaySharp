@@ -1,11 +1,33 @@
 ﻿using System;
+using System.Numerics;
 using System.Runtime.InteropServices;
+using static RaySharp.Textures.Image;
 
 namespace RaySharp
 {
     [StructLayout(LayoutKind.Sequential)]
     public struct Color
     {
+        [DllImport(Constants.dllName)]
+        private static extern Color Fade(Color color, float alpha);
+        [DllImport(Constants.dllName)]
+        private static extern int ColorToInt(Color color);
+        [DllImport(Constants.dllName)]
+        private static extern Vector4 ColorNormalize(Color color);
+        [DllImport(Constants.dllName)]
+        private static extern Color ColorFromNormalized(Vector4 normalized);
+        [DllImport(Constants.dllName)]
+        private static extern Vector3 ColorToHSV(Color color);
+        [DllImport(Constants.dllName)]
+        private static extern Color ColorFromHSV(float hue, float saturation, float value);
+        [DllImport(Constants.dllName)]
+        private static extern Color ColorAlphaBlend(Color dst, Color src, Color tint);
+        [DllImport(Constants.dllName)]
+        private static extern Color GetColor(int hexValue);
+        [DllImport(Constants.dllName)]
+        private static extern Color GetPixelColor(IntPtr srcPtr, PixelFormat format);
+
+
         public static readonly Color LightGray = new Color(200, 200, 200, 255);
         public static readonly Color Gray = new Color(130, 130, 130, 255);
         public static readonly Color DarkGray = new Color(80, 80, 80, 255);
@@ -51,7 +73,7 @@ namespace RaySharp
         public byte A { get; internal set; }
 
         /// <summary>
-        /// Construct a new color
+        /// Construct a new Color
         /// </summary>
         /// <param name="r">Red</param>
         /// <param name="g">Green</param>
@@ -66,20 +88,122 @@ namespace RaySharp
         }
 
         /// <summary>
+        /// Construst a new Color from hexadecimal value
+        /// </summary>
+        /// <param name="hex">Hexadecimal value</param>
+        public Color(int hex)
+        {
+            var color = GetColor(hex);
+
+            R = color.R;
+            G = color.G;
+            B = color.B;
+            A = color.A;
+        }
+
+        /// <summary>
+        /// Construst a new Color from normalized values [0..1]
+        /// </summary>
+        /// <param name="normalized">Normalized value</param>
+        public Color(Vector4 normalized)
+        {
+            var color = ColorFromNormalized(normalized);
+
+            R = color.R;
+            G = color.G;
+            B = color.B;
+            A = color.A;
+        }
+
+        /// <summary>
+        /// Construct a new Color from HSV values, hue [0..360], saturation/value [0..1]
+        /// </summary>
+        /// <param name="hsv">HSV Value</param>
+        public Color(Vector3 hsv)
+        {
+            var color = ColorFromHSV(hsv.X, hsv.Y, hsv.Z);
+
+            R = color.R;
+            G = color.G;
+            B = color.B;
+            A = color.A;
+        }
+
+        /// <summary>
+        /// Get Color from a source pixel pointer of certain format
+        /// </summary>
+        /// <param name="srcPtr">Source pixel pointer</param>
+        /// <param name="format">Pixel format</param>
+        public Color(IntPtr srcPtr, PixelFormat format)
+        {
+            var color = GetPixelColor(srcPtr, format);
+
+            R = color.R;
+            G = color.G;
+            B = color.B;
+            A = color.A;
+        }
+
+        /// <summary>
         /// Linearly interpolate Color to target by t
         /// </summary>
         /// <param name="target">Color to interpolate</param>
         /// <param name="t">multiplier</param>
-        public void Lerp(Color target, float t)
+        /// <returns>Color with Lerp applied</returns>
+        public Color Lerp(Color target, float t)
         {
             t = Math.Clamp(t, 0, 1);
             float bk = (1 - t);
 
-            A = (byte)(A * bk + target.A * t);
-            R = (byte)(R * bk + target.R * t);
-            G = (byte)(G * bk + target.G * t);
-            B = (byte)(B * bk + target.B * t);
+            return new Color((byte)(A * bk + target.A * t), (byte)(R * bk + target.R * t), (byte)(G * bk + target.G * t), (byte)(B * bk + target.B * t));
         }
+
+        /// <summary>
+        /// Returns color with alpha applied
+        /// </summary>
+        /// <param name="alpha">Alpha value, goes from 0.0f to 1.0f</param>
+        /// <returns>Color with alpha applied</returns>
+        public Color Fade(float alpha) => Fade(this, alpha);
+
+        /// <summary>
+        /// Returns src alpha-blended into current color with tint
+        /// </summary>
+        /// <param name="src">Source color</param>
+        /// <param name="tint">Color tint</param>
+        /// <returns>Color alpha-blended</returns>
+        public Color Blend(Color src, Color tint) => ColorAlphaBlend(this, src, tint);
+
+        /// <summary>
+        /// Returns Color normalized as float [0..1]
+        /// </summary>
+        /// <param name="color">A RaySharp color</param>
+        public static implicit operator Vector4(Color color) => ColorNormalize(color);
+        /// <summary>
+        /// Returns Color from normalized values [0..1]
+        /// </summary>
+        /// <param name="normalized">Normalized value</param>
+        public static implicit operator Color(Vector4 normalized) => ColorFromNormalized(normalized);
+        /// <summary>
+        /// Returns HSV values for a Color, hue [0..360], saturation/value [0..1]
+        /// </summary>
+        /// <param name="color">A RaySharp Color</param>
+        public static implicit operator Vector3(Color color) => ColorToHSV(color);
+        /// <summary>
+        /// Returns a Color from HSV values, hue [0..360], saturation/value [0..1]
+        /// </summary>
+        /// <param name="hsv">HSV Value</param>
+        public static implicit operator Color(Vector3 hsv) => ColorFromHSV(hsv.X, hsv.Y, hsv.Z);
+
+        /// <summary>
+        /// Returns hexadecimal value for a Color
+        /// </summary>
+        /// <param name="color">A RaySharp color</param>
+        public static implicit operator int(Color color) => ColorToInt(color);
+        /// <summary>
+        /// Get Color structure from hexadecimal value
+        /// </summary>
+        /// <param name="hex">Hexadecimal value</param>
+        public static implicit operator Color(int hex) => GetColor(hex);
 
         /// <summary>
         /// Convert a RaySharp Color to a System.Drawing Color
@@ -100,6 +224,9 @@ namespace RaySharp
         private static extern void UnloadImageColors(IntPtr colors);
         [DllImport(Constants.dllName, CharSet = CharSet.Ansi)]
         private static extern void UnloadImagePalette(IntPtr colors);
+        [DllImport(Constants.dllName, CharSet = CharSet.Ansi)]
+        private static extern void SetPixelColor(IntPtr dstPtr, Color color, int format);
+
 
         /// <summary>
         /// Unload color data loaded with LoadColors()
@@ -111,6 +238,14 @@ namespace RaySharp
         /// </summary>
         /// <param name="colors">Array of colors</param>
         public static void UnloadPalette(this IntPtr colors) => UnloadImagePalette(colors);
+
+        /// <summary>
+        /// Set color formatted into destination pixel pointer
+        /// </summary>
+        /// <param name="pixel">Pixel pointer</param>
+        /// <param name="color">New Color</param>
+        /// <param name="format">Color format</param>
+        public static void SetPixelColor(this IntPtr pixel, Color color, PixelFormat format) => SetPixelColor(pixel, color, format);
 
     }
 }
