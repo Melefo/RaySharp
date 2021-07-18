@@ -1,5 +1,6 @@
 ﻿using RaySharp.Shapes;
 using System;
+using System.Numerics;
 using System.Runtime.InteropServices;
 using static RaySharp.Textures.Image;
 
@@ -25,6 +26,19 @@ namespace RaySharp.Textures
         private static extern void SetTextureFilter(Texture2D texture, TextureFilter filter);
         [DllImport(Constants.dllName)]
         private static extern void SetTextureWrap(Texture2D texture, TextureWrap wrap);
+
+        [DllImport(Constants.dllName)]
+        private static extern void DrawTextureEx(Texture2D texture, Vector2 position, float rotation, float scale, Color tint);  // Draw a Texture2D
+        [DllImport(Constants.dllName)]
+        private static extern void DrawTextureRec(Texture2D texture, Rectangle source, Vector2 position, Color tint);            // Draw a part of a texture defined by a rectangle
+        [DllImport(Constants.dllName)]
+        private static extern void DrawTextureQuad(Texture2D texture, Vector2 tiling, Vector2 offset, Rectangle quad, Color tint);  // Draw texture quad with tiling and offset parameters
+        [DllImport(Constants.dllName)]
+        private static extern void DrawTextureTiled(Texture2D texture, Rectangle source, Rectangle dest, Vector2 origin, float rotation, float scale, Color tint);      // Draw part of a texture (defined by a rectangle) with rotation and scale tiled into dest.
+        [DllImport(Constants.dllName)]
+        private static extern void DrawTextureNPatch(Texture2D texture, NPatchInfo nPatchInfo, Rectangle dest, Vector2 origin, float rotation, Color tint);   // Draws a texture (or part of it) that stretches or shrinks nicely
+        [DllImport(Constants.dllName)]
+        private static extern void DrawTexturePoly(Texture2D texture, Vector2 center, Vector2[] points, Vector2[] texcoords, int pointsCount, Color tint);      // Draw a textured polygon
 
         /// <summary>
         /// Texture parameters: filter mode
@@ -84,9 +98,6 @@ namespace RaySharp.Textures
             WRAP_MIRROR_CLAMP = 3
         }
 
-        private TextureFilter _filter;
-        private TextureWrap _wrap;
-
         /// <summary>
         /// OpenGL texture id
         /// </summary>
@@ -108,28 +119,18 @@ namespace RaySharp.Textures
         /// </summary>
         public PixelFormat Format { get; private set; }
         /// <summary>
-        /// Get/Set texture scaling filter mode
+        /// Set texture scaling filter mode
         /// </summary>
-        public TextureFilter Filter 
+        public TextureFilter Filter
         {
-            get => _filter;
-            set
-            {
-                SetTextureFilter(this, value);
-                _filter = value;
-            }
+            set => SetTextureFilter(this, value);
         }
         /// <summary>
-        /// Get/Set texture wrapping mode
+        /// Set texture wrapping mode
         /// </summary>
         public TextureWrap Wrap
         {
-            get => _wrap;
-            set
-            {
-                SetTextureWrap(this, value);
-                _wrap = value;
-            }
+            set => SetTextureWrap(this, value);
         }
 
         /// <summary>
@@ -140,8 +141,6 @@ namespace RaySharp.Textures
         {
             var texture = LoadTexture(filename);
 
-            _filter = TextureFilter.POINT;
-            _wrap = TextureWrap.REPEAT;
             Id = texture.Id;
             Width = texture.Width;
             Height = texture.Height;
@@ -157,8 +156,6 @@ namespace RaySharp.Textures
         {
             var texture = LoadTextureFromImage(image);
 
-            _filter = TextureFilter.POINT;
-            _wrap = TextureWrap.REPEAT;
             Id = texture.Id;
             Width = texture.Width;
             Height = texture.Height;
@@ -195,5 +192,57 @@ namespace RaySharp.Textures
         /// Generate GPU mipmaps for current texture
         /// </summary>
         public void GenMipmaps() => GenTextureMipmaps(ref this);
+
+        /// <summary>
+        /// Draw a Texture2D
+        /// </summary>
+        /// <param name="tint">Texture color</param>
+        /// <param name="position">Texture position</param>
+        /// <param name="rotation">Texture rotation</param>
+        /// <param name="scale">Texture scale</param>
+        public void Draw(Color tint, Vector2 position, float rotation = 0, float scale = 1) => DrawTextureEx(this, position, rotation, scale, tint);
+        /// <summary>
+        /// Draw a part of a texture defined by a rectangle
+        /// </summary>
+        /// <param name="tint">Texture color</param>
+        /// <param name="source">Texture part</param>
+        /// <param name="position">Texture position</param>
+        public void DrawRec(Color tint, Rectangle source, Vector2 position) => DrawTextureRec(this, source, position, tint);
+        /// <summary>
+        /// Draw texture quad with tiling and offset parameters
+        /// </summary>
+        /// <param name="tint">Texture color</param>
+        /// <param name="tiling">Tiling</param>
+        /// <param name="offset">Offset</param>
+        /// <param name="quad">Quad</param>
+        public void DrawQuad(Color tint, Vector2 tiling, Vector2 offset, Rectangle quad) => DrawTextureQuad(this, tiling, offset, quad, tint);
+        /// <summary>
+        /// Draw part of a texture (defined by a rectangle) with rotation and scale tiled into dest.
+        /// </summary>
+        /// <param name="tint">Texture color</param>
+        /// <param name="source">Source position and dimension</param>
+        /// <param name="dest">Destination position and dimension</param>
+        /// <param name="origin">Origin position</param>
+        /// <param name="rotation">Texture cotation</param>
+        /// <param name="scale">Texture scale</param>
+        public void DrawTiled(Color tint, Rectangle source, Rectangle dest, Vector2 origin, float rotation = 0, float scale = 1) => DrawTextureTiled(this, source, dest, origin, rotation, scale, tint);
+        /// <summary>
+        /// Draws a texture (or part of it) that stretches or shrinks nicely
+        /// </summary>
+        /// <param name="tint">Texture color</param>
+        /// <param name="nPatchInfo">source information</param>
+        /// <param name="dest">Destination position and dimension</param>
+        /// <param name="origin">Origion position</param>
+        /// <param name="rotation">Texture rotation</param>
+        public void DrawNPatch(Color tint, NPatchInfo nPatchInfo, Rectangle dest, Vector2 origin, float rotation = 0) => DrawTextureNPatch(this, nPatchInfo, dest, origin, rotation, tint);
+        /// <summary>
+        /// Draw a textured polygon
+        /// </summary>
+        /// <param name="tint">Texture color</param>
+        /// <param name="center">Center position</param>
+        /// <param name="points">Array of points</param>
+        /// <param name="texcoords">Array of Coordinates</param>
+        /// <param name="pointsCount">Number of points</param>
+        public void DrawPoly(Color tint, Vector2 center, Vector2[] points, Vector2[] texcoords, int pointsCount) => DrawTexturePoly(this, center, points, texcoords, pointsCount, tint);
     }
 }
