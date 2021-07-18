@@ -93,4 +93,24 @@ namespace RaySharp
         /// <param name="color">a System.Drawing color</param>
         public static implicit operator Color(System.Drawing.Color color) => new Color(color.R, color.G, color.B, color.A);
     }
+
+    public static class ColorExtension
+    {
+        [DllImport(Constants.dllName, CharSet = CharSet.Ansi)]
+        private static extern void UnloadImageColors(IntPtr colors);
+        [DllImport(Constants.dllName, CharSet = CharSet.Ansi)]
+        private static extern void UnloadImagePalette(IntPtr colors);
+
+        /// <summary>
+        /// Unload color data loaded with LoadColors()
+        /// </summary>
+        /// <param name="colors">Array of colors</param>
+        public static void UnloadColors(this IntPtr colors) => UnloadImageColors(colors);
+        /// <summary>
+        /// Unload colors palette loaded with LoadPalette()
+        /// </summary>
+        /// <param name="colors">Array of colors</param>
+        public static void UnloadPalette(this IntPtr colors) => UnloadImagePalette(colors);
+
+    }
 }

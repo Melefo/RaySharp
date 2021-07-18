@@ -24,11 +24,12 @@ namespace RaySharp.Tests
             Image test = new("test.png");
             test.ColorGrayscale();
             test.Export("grey.png");
+            test.LoadColors();
 
             List<Triangle> list = new();
 
             for (int i = 0; i < 100; i++)
-                list.Add(new(new (rand.Next(0, 500), rand.Next(0, 500)), new(rand.Next(0, 500), rand.Next(0, 500)), new(rand.Next(0, 500), rand.Next(0, 500)), Color.Black));
+                list.Add(new(new (rand.Next(0, 500), rand.Next(0, 500)), new(rand.Next(0, 500), rand.Next(0, 500)), new(rand.Next(0, 500), rand.Next(0, 500))));
 
 
             while (!Window.ShouldClose)

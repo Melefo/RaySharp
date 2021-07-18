@@ -1,6 +1,7 @@
 ﻿using RaySharp.Shapes;
 using RaySharp.Text;
 using System;
+using System.Collections.Generic;
 using System.Numerics;
 using System.Runtime.InteropServices;
 
@@ -111,6 +112,15 @@ namespace RaySharp.Textures
         private static extern void ImageDraw(ref Image dst, Image src, Rectangle srcRec, Rectangle dstRec, Color tint);
         [DllImport(Constants.dllName)]
         private static extern void ImageDrawTextEx(ref Image dst, Font font, string text, Vector2 position, float fontSize, float spacing, Color tint);
+
+        [DllImport(Constants.dllName)]
+        private static extern IntPtr LoadImageColors(Image image);
+        [DllImport(Constants.dllName)]
+        private static extern IntPtr LoadImagePalette(Image image, int maxPaletteSize, ref int colorsCount);
+
+        [DllImport(Constants.dllName)]
+        private static extern Rectangle GetImageAlphaBorder(Image image, float threshold);
+
 
         /// <summary>
         /// Pixel formats
@@ -656,5 +666,27 @@ namespace RaySharp.Textures
         /// <param name="spacing">Spacing size</param>
         /// <param name="tint">Color of text</param>
         public void DrawText(Font font, string text, Vector2 position, float fontSize, float spacing, Color tint) => ImageDrawTextEx(ref this, font, text, position, fontSize, spacing, tint);
+
+        /// <summary>
+        /// Load color data from image as a Color array (RGBA - 32bit)
+        /// </summary>
+        /// <returns>Array of colors</returns>
+        public IntPtr LoadColors() => LoadImageColors(this);
+
+        /// <summary>
+        /// Load colors palette from image as a Color array (RGBA - 32bit)
+        /// </summary>
+        /// <param name="maxPaletteSize">Maximum number of colors</param>
+        /// <param name="colorsCount">Number of colors found</param>
+        /// <returns>Array of colors</returns>
+        public IntPtr LoadPalette(int maxPaletteSize, ref int colorsCount) => LoadImagePalette(this, maxPaletteSize, ref colorsCount);
+
+        /// <summary>
+        /// Get image alpha border rectangle
+        /// </summary>
+        /// <param name="threshold">Alpha thresold</param>
+        /// <returns>Alpha border rectangle</returns>
+        public Rectangle GetAlphaBorder(float threshold) => GetImageAlphaBorder(this, threshold);
+
     }
 }
