@@ -58,11 +58,6 @@ namespace RaySharp
         public static extern void EndDrawing();
 
         //[DllImport(Constants.dllName)]
-        //public static extern void BeginTextureMode(RenderTexture2D target);                          // Initializes render texture for drawing
-        //[DllImport(Constants.dllName)]
-        //public static extern void EndTextureMode(void);                                              // Ends drawing to render texture
-
-        //[DllImport(Constants.dllName)]
         //public static extern void BeginShaderMode(Shader shader);                                    // Begin custom shader drawing
         //[DllImport(Constants.dllName)]
         //public static extern void EndShaderMode(void);                                               // End custom shader drawing (use default shader)

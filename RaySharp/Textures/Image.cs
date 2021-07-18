@@ -1,7 +1,6 @@
 ﻿using RaySharp.Shapes;
 using RaySharp.Text;
 using System;
-using System.Collections.Generic;
 using System.Numerics;
 using System.Runtime.InteropServices;
 
@@ -120,6 +119,10 @@ namespace RaySharp.Textures
 
         [DllImport(Constants.dllName)]
         private static extern Rectangle GetImageAlphaBorder(Image image, float threshold);
+
+        [DllImport(Constants.dllName)]
+        private static extern Texture2D LoadTextureCubemap(Image image, int layout);
+
 
 
         /// <summary>
@@ -687,6 +690,13 @@ namespace RaySharp.Textures
         /// <param name="threshold">Alpha thresold</param>
         /// <returns>Alpha border rectangle</returns>
         public Rectangle GetAlphaBorder(float threshold) => GetImageAlphaBorder(this, threshold);
+
+        /// <summary>
+        /// Load cubemap from image, multiple image cubemap layouts supported
+        /// </summary>
+        /// <param name="layout">Layout slelected</param>
+        /// <returns>Texture of Cubemap</returns>
+        public Texture2D LoadCubemap(int layout) => LoadTextureCubemap(this, layout);
 
     }
 }
