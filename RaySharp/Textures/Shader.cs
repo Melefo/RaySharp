@@ -7,13 +7,13 @@ namespace RaySharp.Textures
     [StructLayout(LayoutKind.Sequential)]
     public struct Shader : IDisposable
     {
-        [DllImport(Constants.dllName)]
+        [DllImport(Constants.dllName, CharSet = CharSet.Ansi)]
         private static extern Shader LoadShader(string vsFileName, string fsFileName);
-        [DllImport(Constants.dllName)]
+        [DllImport(Constants.dllName, CharSet = CharSet.Ansi)]
         private static extern Shader LoadShaderFromMemory(string vsCode, string fsCode);
-        [DllImport(Constants.dllName)]
+        [DllImport(Constants.dllName, CharSet = CharSet.Ansi)]
         private static extern int GetShaderLocation(Shader shader, string uniformName);
-        [DllImport(Constants.dllName)]
+        [DllImport(Constants.dllName, CharSet = CharSet.Ansi)]
         private static extern int GetShaderLocationAttrib(Shader shader, string attribName);
         [DllImport(Constants.dllName)]
         private static extern void SetShaderValueV(Shader shader, ShaderLocationIndex locIndex, IntPtr value, ShaderUniformDataType uniformType, int count);
