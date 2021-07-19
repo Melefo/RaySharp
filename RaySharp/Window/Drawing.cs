@@ -57,11 +57,6 @@ namespace RaySharp
         [DllImport(Constants.dllName)]
         public static extern void EndDrawing();
 
-        //[DllImport(Constants.dllName)]
-        //public static extern void BeginShaderMode(Shader shader);                                    // Begin custom shader drawing
-        //[DllImport(Constants.dllName)]
-        //public static extern void EndShaderMode(void);                                               // End custom shader drawing (use default shader)
-
         /// <summary>
         /// Begin blending mode (alpha, additive, multiplied)
         /// </summary>
