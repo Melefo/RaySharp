@@ -511,12 +511,7 @@ namespace RaySharp.Textures
         /// <param name="filename">File path</param>
         /// <param name="asCode">Export image as code file defining an array of bytes</param>
         /// <returns>true on success</returns>
-        public bool Export(string filename, bool asCode = false)
-        {
-            if (asCode)
-                return ExportImageAsCode(this, filename);
-            return ExportImage(this, filename);
-        }
+        public bool Export(string filename, bool asCode = false) => asCode ? ExportImageAsCode(this, filename) : ExportImage(this, filename);
 
         /// <summary>
         /// Convert image data to desired format

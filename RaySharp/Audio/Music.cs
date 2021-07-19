@@ -3,6 +3,7 @@ using System.Runtime.InteropServices;
 
 namespace RaySharp.Audio
 {
+    [StructLayout(LayoutKind.Sequential)]
     public struct Music : IDisposable
     {
         [DllImport(Constants.dllName, CharSet = CharSet.Ansi)]
