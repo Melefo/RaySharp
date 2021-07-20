@@ -25,8 +25,7 @@ namespace RaySharp
         [DllImport(Constants.dllName)]
         private static extern Color GetColor(int hexValue);
         [DllImport(Constants.dllName)]
-        private static extern Color GetPixelColor(IntPtr srcPtr, PixelFormat format);
-
+        private static extern unsafe Color GetPixelColor(void* srcPtr, PixelFormat format);
 
         public static readonly Color LightGray = new Color(200, 200, 200, 255);
         public static readonly Color Gray = new Color(130, 130, 130, 255);
@@ -134,14 +133,45 @@ namespace RaySharp
         /// </summary>
         /// <param name="srcPtr">Source pixel pointer</param>
         /// <param name="format">Pixel format</param>
-        public Color(IntPtr srcPtr, PixelFormat format)
+        public unsafe Color(short src, PixelFormat format)
         {
-            var color = GetPixelColor(srcPtr, format);
+            if (format != PixelFormat.UNCOMPRESSED_R5G6B5 &&
+                format != PixelFormat.UNCOMPRESSED_R5G5B5A1 &&
+                format != PixelFormat.UNCOMPRESSED_R4G4B4A4)
+                throw new ArgumentException();
+            var color = GetPixelColor(&src, format);
 
             R = color.R;
             G = color.G;
             B = color.B;
             A = color.A;
+        }
+
+        /// <summary>
+        /// Get Color from a source pixel pointer of certain format
+        /// </summary>
+        /// <param name="srcPtr">Source pixel pointer</param>
+        /// <param name="format">Pixel format</param>
+        public unsafe Color(byte[] src, PixelFormat format)
+        {
+            if (format == PixelFormat.UNCOMPRESSED_R5G6B5 &&
+                format == PixelFormat.UNCOMPRESSED_R5G5B5A1 && 
+                format == PixelFormat.UNCOMPRESSED_R4G4B4A4)
+                throw new ArgumentException();
+            if ((format == PixelFormat.UNCOMPRESSED_GRAYSCALE && src.Length < 1) ||
+                (format == PixelFormat.UNCOMPRESSED_GRAY_ALPHA && src.Length < 2) ||
+                (format == PixelFormat.UNCOMPRESSED_R8G8B8 && src.Length < 3) ||
+                (format == PixelFormat.UNCOMPRESSED_R8G8B8A8 && src.Length < 4))
+                throw new ArgumentException();
+            fixed (byte* srcPtr = src)
+            {
+                var color = GetPixelColor(srcPtr, format);
+
+                R = color.R;
+                G = color.G;
+                B = color.B;
+                A = color.A;
+            }
         }
 
         /// <summary>
@@ -221,23 +251,7 @@ namespace RaySharp
     public static class ColorExtension
     {
         [DllImport(Constants.dllName, CharSet = CharSet.Ansi)]
-        private static extern void UnloadImageColors(IntPtr colors);
-        [DllImport(Constants.dllName, CharSet = CharSet.Ansi)]
-        private static extern void UnloadImagePalette(IntPtr colors);
-        [DllImport(Constants.dllName, CharSet = CharSet.Ansi)]
         private static extern void SetPixelColor(IntPtr dstPtr, Color color, int format);
-
-
-        /// <summary>
-        /// Unload color data loaded with LoadColors()
-        /// </summary>
-        /// <param name="colors">Array of colors</param>
-        public static void UnloadColors(this IntPtr colors) => UnloadImageColors(colors);
-        /// <summary>
-        /// Unload colors palette loaded with LoadPalette()
-        /// </summary>
-        /// <param name="colors">Array of colors</param>
-        public static void UnloadPalette(this IntPtr colors) => UnloadImagePalette(colors);
 
         /// <summary>
         /// Set color formatted into destination pixel pointer
@@ -246,6 +260,5 @@ namespace RaySharp
         /// <param name="color">New Color</param>
         /// <param name="format">Color format</param>
         public static void SetPixelColor(this IntPtr pixel, Color color, PixelFormat format) => SetPixelColor(pixel, color, format);
-
     }
 }

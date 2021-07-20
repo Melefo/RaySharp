@@ -9,7 +9,7 @@ namespace RaySharp.Audio
         [DllImport(Constants.dllName, CharSet = CharSet.Ansi)]
         private static extern Wave LoadWave(string fileName);
         [DllImport(Constants.dllName, CharSet = CharSet.Ansi)]
-        private static extern Wave LoadWaveFromMemory(string fileType, IntPtr fileData, int dataSize);
+        private static extern Wave LoadWaveFromMemory(string fileType, byte[] fileData, int dataSize);
         [DllImport(Constants.dllName)]
         private static extern void UnloadWave(Wave wave);
         [DllImport(Constants.dllName, CharSet = CharSet.Ansi)]
@@ -23,8 +23,10 @@ namespace RaySharp.Audio
         [DllImport(Constants.dllName, CharSet = CharSet.Ansi)]
         private static extern void WaveCrop(ref Wave wave, int initSample, int finalSample);
 
-        [DllImport(Constants.dllName, CharSet = CharSet.Ansi)]
-        private static extern IntPtr LoadWaveSamples(Wave wave);
+        [DllImport(Constants.dllName)]
+        private static extern unsafe float* LoadWaveSamples(Wave wave);
+        [DllImport(Constants.dllName)]
+        private static extern unsafe void UnloadWaveSamples(float* samples);
 
         /// <summary>
         /// Number of samples
@@ -43,9 +45,26 @@ namespace RaySharp.Audio
         /// </summary>
         public uint Channels { get; private set; }
         /// <summary>
-        /// Buffer data pointer (void *)
+        /// Buffer data pointer
         /// </summary>
         public IntPtr Data { get; private set; }
+        /// <summary>
+        /// Load samples data from wave as a floats array
+        /// </summary>
+        public unsafe float[] Samples
+        {
+            get
+            {
+                float* ptr = LoadWaveSamples(this);
+                var array = new float[SampleCount];
+
+                for (int i = 0; i < SampleCount; i++)
+                    array[i] = ptr[i];
+
+                UnloadWaveSamples(ptr);
+                return array;
+            }
+        }
 
         /// <summary>
         ///Load wave data from file
@@ -68,7 +87,7 @@ namespace RaySharp.Audio
         /// <param name="fileType">File type</param>
         /// <param name="data">Wave data</param>
         /// <param name="dataSize">Data size</param>
-        public Wave(string fileType, IntPtr data, int dataSize)
+        public Wave(string fileType, byte[] data, int dataSize)
         {
             var wave = LoadWaveFromMemory(fileType, data, dataSize);
 
@@ -134,18 +153,6 @@ namespace RaySharp.Audio
         /// Load samples data from wave as a floats array
         /// </summary>
         /// <returns>floats array</returns>
-        public IntPtr LoadSamples() => LoadWaveSamples(this);
-    }
 
-    public static class WaveExtension
-    {
-        [DllImport(Constants.dllName, CharSet = CharSet.Ansi)]
-        private static extern void UnloadWaveSamples(IntPtr samples);
-
-        /// <summary>
-        /// Unload samples data loaded with LoadSamples()
-        /// </summary>
-        /// <param name="samples">Samples from Wave</param>
-        public static void DisposeWaveSamples(this IntPtr samples) => UnloadWaveSamples(samples);
     }
 }

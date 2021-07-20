@@ -16,7 +16,7 @@ namespace RaySharp.Textures
         [DllImport(Constants.dllName, CharSet = CharSet.Ansi)]
         private static extern Image LoadImageAnim(string fileName, ref int frames);
         [DllImport(Constants.dllName, CharSet = CharSet.Ansi)]
-        private static extern Image LoadImageFromMemory(string fileType, IntPtr fileData, int dataSize);
+        private static extern Image LoadImageFromMemory(string fileType, byte[] fileData, int dataSize);
         [DllImport(Constants.dllName)]
         private static extern void UnloadImage(Image image);
         [DllImport(Constants.dllName, CharSet = CharSet.Ansi)]
@@ -113,9 +113,13 @@ namespace RaySharp.Textures
         private static extern void ImageDrawTextEx(ref Image dst, Font font, string text, Vector2 position, float fontSize, float spacing, Color tint);
 
         [DllImport(Constants.dllName)]
-        private static extern IntPtr LoadImageColors(Image image);
+        private static extern unsafe Color* LoadImageColors(Image image);
         [DllImport(Constants.dllName)]
-        private static extern IntPtr LoadImagePalette(Image image, int maxPaletteSize, ref int colorsCount);
+        private static extern unsafe void UnloadImageColors(Color* colors);
+        [DllImport(Constants.dllName)]
+        private static extern unsafe Color* LoadImagePalette(Image image, int maxPaletteSize, ref int colorsCount);
+        [DllImport(Constants.dllName)]
+        private static extern unsafe void UnloadImagePalette(Color* colors);
 
         [DllImport(Constants.dllName)]
         private static extern Rectangle GetImageAlphaBorder(Image image, float threshold);
@@ -225,9 +229,13 @@ namespace RaySharp.Textures
         /// </summary>
         public IntPtr Data { get; private set; }
         /// <summary>
-        /// Image base width & height
+        /// Image base width
         /// </summary>
-        public Vector2 Dimensions { get; private set; }
+        public int Width { get; private set; }
+        /// <summary>
+        /// Image base height
+        /// </summary>
+        public int Height { get; private set; }
         /// <summary>
         /// Mipmap levels, 1 by default
         /// </summary>
@@ -238,6 +246,24 @@ namespace RaySharp.Textures
         public PixelFormat Format { get; private set; }
 
         /// <summary>
+        /// Load color data from image as a Color array (RGBA - 32bit)
+        /// </summary>
+        public unsafe Color[] Colors
+        {
+            get
+            {
+                Color* ptr = LoadImageColors(this);
+                var array = new Color[Width * Height];
+
+                for (int i = 0; i < Width * Height; i++)
+                    array[i] = ptr[i];
+
+                UnloadImageColors(ptr);
+                return array;
+            }
+        }
+
+        /// <summary>
         /// Load image from file into CPU memory (RAM)
         /// </summary>
         /// <param name="filename">File path</param>
@@ -246,7 +272,8 @@ namespace RaySharp.Textures
             var image = LoadImage(filename);
 
             Data = image.Data;
-            Dimensions = image.Dimensions;
+            Width = image.Width;
+            Height = image.Height;
             Mipmaps = image.Mipmaps;
             Format = image.Format;
         }
@@ -263,7 +290,8 @@ namespace RaySharp.Textures
             var image = LoadImageRaw(filename, (int)dimensions.X, (int)dimensions.Y, format, headerSize);
 
             Data = image.Data;
-            Dimensions = image.Dimensions;
+            Width = image.Width;
+            Height = image.Height;
             Mipmaps = image.Mipmaps;
             Format = image.Format;
         }
@@ -278,7 +306,8 @@ namespace RaySharp.Textures
             var image = LoadImageAnim(fileName, ref frames);
 
             Data = image.Data;
-            Dimensions = image.Dimensions;
+            Width = image.Width;
+            Height = image.Height;
             Mipmaps = image.Mipmaps;
             Format = image.Format;
         }
@@ -289,12 +318,13 @@ namespace RaySharp.Textures
         /// <param name="fileType">Image Type</param>
         /// <param name="fileData">Image Data</param>
         /// <param name="dataSize">Image Size</param>
-        public Image(string fileType, IntPtr fileData, int dataSize)
+        public Image(string fileType, byte[] fileData, int dataSize)
         {
             var image = LoadImageFromMemory(fileType, fileData, dataSize);
 
             Data = image.Data;
-            Dimensions = image.Dimensions;
+            Width = image.Width;
+            Height = image.Height;
             Mipmaps = image.Mipmaps;
             Format = image.Format;
         }
@@ -309,7 +339,8 @@ namespace RaySharp.Textures
             var image = GenImageCellular((int)dimensions.X, (int)dimensions.Y, tileSize);
 
             Data = image.Data;
-            Dimensions = image.Dimensions;
+            Width = image.Width;
+            Height = image.Height;
             Mipmaps = image.Mipmaps;
             Format = image.Format;
         }
@@ -325,7 +356,8 @@ namespace RaySharp.Textures
             var image = GenImagePerlinNoise((int)dimensions.X, (int)dimensions.Y, (int)offset.X, (int)offset.Y, scale);
 
             Data = image.Data;
-            Dimensions = image.Dimensions;
+            Width = image.Width;
+            Height = image.Height;
             Mipmaps = image.Mipmaps;
             Format = image.Format;
         }
@@ -340,7 +372,8 @@ namespace RaySharp.Textures
             var image = GenImageWhiteNoise((int)dimensions.X, (int)dimensions.Y, factor);
 
             Data = image.Data;
-            Dimensions = image.Dimensions;
+            Width = image.Width;
+            Height = image.Height;
             Mipmaps = image.Mipmaps;
             Format = image.Format;
         }
@@ -357,7 +390,8 @@ namespace RaySharp.Textures
             var image = GenImageChecked((int)dimensions.X, (int)dimensions.Y, (int)checksPosition.X, (int)checksPosition.Y, col1, col2);
 
             Data = image.Data;
-            Dimensions = image.Dimensions;
+            Width = image.Width;
+            Height = image.Height;
             Mipmaps = image.Mipmaps;
             Format = image.Format;
         }
@@ -374,7 +408,8 @@ namespace RaySharp.Textures
             var image = GenImageGradientRadial((int)dimensions.X, (int)dimensions.Y, density, inner, outer);
 
             Data = image.Data;
-            Dimensions = image.Dimensions;
+            Width = image.Width;
+            Height = image.Height;
             Mipmaps = image.Mipmaps;
             Format = image.Format;
         }
@@ -396,7 +431,8 @@ namespace RaySharp.Textures
                 image = GenImageGradientH((int)dimensions.X, (int)dimensions.Y, color1, color2);
 
             Data = image.Data;
-            Dimensions = image.Dimensions;
+            Width = image.Width;
+            Height = image.Height;
             Mipmaps = image.Mipmaps;
             Format = image.Format;
         }
@@ -411,7 +447,8 @@ namespace RaySharp.Textures
             var image = GenImageColor((int)dimensions.X, (int)dimensions.Y, color);
 
             Data = image.Data;
-            Dimensions = image.Dimensions;
+            Width = image.Width;
+            Height = image.Height;
             Mipmaps = image.Mipmaps;
             Format = image.Format;
         }
@@ -425,7 +462,8 @@ namespace RaySharp.Textures
             var image = ImageCopy(copy);
 
             Data = image.Data;
-            Dimensions = image.Dimensions;
+            Width = image.Width;
+            Height = image.Height;
             Mipmaps = image.Mipmaps;
             Format = image.Format;
         }
@@ -440,7 +478,8 @@ namespace RaySharp.Textures
             var image = ImageFromImage(copy, piece);
 
             Data = image.Data;
-            Dimensions = image.Dimensions;
+            Width = image.Width;
+            Height = image.Height;
             Mipmaps = image.Mipmaps;
             Format = image.Format;
         }
@@ -456,7 +495,8 @@ namespace RaySharp.Textures
             var image = ImageText(text, fontSize, color);
 
             Data = image.Data;
-            Dimensions = image.Dimensions;
+            Width = image.Width;
+            Height = image.Height;
             Mipmaps = image.Mipmaps;
             Format = image.Format;
         }
@@ -474,7 +514,8 @@ namespace RaySharp.Textures
             var image = ImageTextEx(font, text, fontSize, spacing, tint);
 
             Data = image.Data;
-            Dimensions = image.Dimensions;
+            Width = image.Width;
+            Height = image.Height;
             Mipmaps = image.Mipmaps;
             Format = image.Format;
         }
@@ -488,7 +529,8 @@ namespace RaySharp.Textures
             var image = GetTextureData(texture);
 
             Data = image.Data;
-            Dimensions = image.Dimensions;
+            Width = image.Width;
+            Height = image.Height;
             Mipmaps = image.Mipmaps;
             Format = image.Format;
         }
@@ -500,7 +542,8 @@ namespace RaySharp.Textures
         {
             UnloadImage(this);
             Data = IntPtr.Zero;
-            Dimensions = Vector2.Zero;
+            Width = 0;
+            Height = 0;
             Mipmaps = 0;
             Format = 0;
         }
@@ -681,18 +724,22 @@ namespace RaySharp.Textures
         public void DrawText(Font font, string text, Vector2 position, float fontSize, float spacing, Color tint) => ImageDrawTextEx(ref this, font, text, position, fontSize, spacing, tint);
 
         /// <summary>
-        /// Load color data from image as a Color array (RGBA - 32bit)
-        /// </summary>
-        /// <returns>Array of colors</returns>
-        public IntPtr LoadColors() => LoadImageColors(this);
-
-        /// <summary>
         /// Load colors palette from image as a Color array (RGBA - 32bit)
         /// </summary>
         /// <param name="maxPaletteSize">Maximum number of colors</param>
         /// <param name="colorsCount">Number of colors found</param>
         /// <returns>Array of colors</returns>
-        public IntPtr LoadPalette(int maxPaletteSize, ref int colorsCount) => LoadImagePalette(this, maxPaletteSize, ref colorsCount);
+        public unsafe Color[] LoadPalette(int maxPaletteSize, ref int colorsCount)
+        {
+            Color* ptr = LoadImagePalette(this, maxPaletteSize, ref colorsCount);
+            var array = new Color[colorsCount];
+
+            for (int i = 0; i < colorsCount; i++)
+                array[i] = ptr[i];
+
+            UnloadImagePalette(ptr);
+            return array;
+        }
 
         /// <summary>
         /// Get image alpha border rectangle

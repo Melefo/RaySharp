@@ -9,7 +9,7 @@ namespace RaySharp.Audio
         [DllImport(Constants.dllName, CharSet = CharSet.Ansi)]
         private static extern Music LoadMusicStream(string fileName);
         [DllImport(Constants.dllName, CharSet = CharSet.Ansi)]
-        private static extern Music LoadMusicStreamFromMemory(string fileType, IntPtr data, int dataSize);
+        private static extern Music LoadMusicStreamFromMemory(string fileType, byte[] data, int dataSize);
         [DllImport(Constants.dllName)]
         private static extern void UnloadMusicStream(Music music);
         [DllImport(Constants.dllName)]
@@ -102,7 +102,7 @@ namespace RaySharp.Audio
         /// <param name="fileType">File type</param>
         /// <param name="data">Music data</param>
         /// <param name="dataSize">Data size</param>
-        public Music(string fileType, IntPtr data, int dataSize)
+        public Music(string fileType, byte[] data, int dataSize)
         {
             var music = LoadMusicStreamFromMemory(fileType, data, dataSize);
 

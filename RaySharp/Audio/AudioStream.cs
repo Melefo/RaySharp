@@ -10,7 +10,7 @@ namespace RaySharp.Audio
         [DllImport(Constants.dllName)]
         private static extern AudioStream InitAudioStream(uint sampleRate, uint sampleSize, uint channels);
         [DllImport(Constants.dllName)]
-        private static extern void UpdateAudioStream(AudioStream stream, IntPtr data, int samplesCount);
+        private static extern unsafe void UpdateAudioStream(AudioStream stream, void* data, int samplesCount);
         [DllImport(Constants.dllName)]
         private static extern void CloseAudioStream(AudioStream stream);
         [DllImport(Constants.dllName)]
@@ -31,7 +31,7 @@ namespace RaySharp.Audio
         private static extern void SetAudioStreamPitch(AudioStream stream, float pitch);
 
         /// <summary>
-        /// Pointer to internal data(rAudioBuffer *) used by the audio system
+        /// Pointer to internal data used by the audio system
         /// </summary>
         public IntPtr AudioBuffer { get; private set; }
         /// <summary>
@@ -70,6 +70,8 @@ namespace RaySharp.Audio
         /// <param name="channels">Number of channels</param>
         public AudioStream(uint sampleRate, uint sampleSize, uint channels)
         {
+            if (sampleSize != 8 && sampleSize != 16 && sampleSize != 32)
+                throw new ArgumentException();
             var stream = InitAudioStream(sampleRate, sampleSize, channels);
 
             AudioBuffer = stream.AudioBuffer;
@@ -95,7 +97,39 @@ namespace RaySharp.Audio
         /// </summary>
         /// <param name="data">New data</param>
         /// <param name="samplesCount">Number of samples inside data</param>
-        public void Update(IntPtr data, int samplesCount) => UpdateAudioStream(this, data, samplesCount);
+        public unsafe void Update(float[] data, int samplesCount)
+        {
+            if (SampleSize != 32)
+                throw new ArgumentException();
+            fixed (float* ptr = data)
+                UpdateAudioStream(this, ptr, samplesCount);
+        }
+
+        /// <summary>
+        /// Update audio stream buffers with data
+        /// </summary>
+        /// <param name="data">New data</param>
+        /// <param name="samplesCount">Number of samples inside data</param>
+        public unsafe void Update(short[] data, int samplesCount)
+        {
+            if (SampleSize != 16)
+                throw new ArgumentException();
+            fixed (short* ptr = data)
+                UpdateAudioStream(this, ptr, samplesCount);
+        }
+
+        /// <summary>
+        /// Update audio stream buffers with data
+        /// </summary>
+        /// <param name="data">New data</param>
+        /// <param name="samplesCount">Number of samples inside data</param>
+        public unsafe void Update(char[] data, int samplesCount)
+        {
+            if (SampleSize != 8)
+                throw new ArgumentException();
+            fixed (char* ptr = data)
+                UpdateAudioStream(this, ptr, samplesCount);
+        }
 
         /// <summary>
         /// Check if any audio stream buffers requires refill
