@@ -8,11 +8,11 @@ namespace RaySharp.Audio
     {
 
         [DllImport(Constants.dllName)]
-        private static extern AudioStream InitAudioStream(uint sampleRate, uint sampleSize, uint channels);
+        private static extern AudioStream LoadAudioStream(uint sampleRate, uint sampleSize, uint channels);
         [DllImport(Constants.dllName)]
         private static extern unsafe void UpdateAudioStream(AudioStream stream, void* data, int samplesCount);
         [DllImport(Constants.dllName)]
-        private static extern void CloseAudioStream(AudioStream stream);
+        private static extern void UnloadAudioStream(AudioStream stream);
         [DllImport(Constants.dllName)]
         private static extern bool IsAudioStreamProcessed(AudioStream stream);
         [DllImport(Constants.dllName)]
@@ -72,7 +72,7 @@ namespace RaySharp.Audio
         {
             if (sampleSize != 8 && sampleSize != 16 && sampleSize != 32)
                 throw new ArgumentException();
-            var stream = InitAudioStream(sampleRate, sampleSize, channels);
+            var stream = LoadAudioStream(sampleRate, sampleSize, channels);
 
             AudioBuffer = stream.AudioBuffer;
             SampleRate = stream.SampleRate;
@@ -85,7 +85,7 @@ namespace RaySharp.Audio
         /// </summary>
         public void Dispose()
         {
-            CloseAudioStream(this);
+            UnloadAudioStream(this);
             AudioBuffer = IntPtr.Zero;
             SampleRate = 0;
             SampleSize = 0;

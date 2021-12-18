@@ -12,11 +12,11 @@ namespace RaySharp.Text
         [DllImport(Constants.dllName, CharSet = CharSet.Ansi)]
         private static extern Font LoadFont(string fileName);
         [DllImport(Constants.dllName, CharSet = CharSet.Ansi)]
-        private static extern Font LoadFontEx(string fileName, int fontSize, IntPtr fontChars, int charsCount);
+        private static extern Font LoadFontEx(string fileName, int fontSize, IntPtr fontChars, int glyphCount);
         [DllImport(Constants.dllName)]
         private static extern Font LoadFontFromImage(Image image, Color key, int firstChar);
         [DllImport(Constants.dllName, CharSet = CharSet.Ansi)]
-        private static extern Font LoadFontFromMemory(string fileType, IntPtr fileData, int dataSize, int fontSize, IntPtr fontChars, int charsCount);
+        private static extern Font LoadFontFromMemory(string fileType, IntPtr fileData, int dataSize, int fontSize, IntPtr fontChars, int glyphCount);
 
         [DllImport(Constants.dllName, CharSet = CharSet.Ansi)]
         private static extern void UnloadFont(Font font);

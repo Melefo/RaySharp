@@ -36,8 +36,7 @@ namespace RaySharp.Textures
         private static extern Image GenImageChecked(int width, int height, int checksX, int checksY, Color col1, Color col2);
         [DllImport(Constants.dllName)]
         private static extern Image GenImageWhiteNoise(int width, int height, float factor);
-        [DllImport(Constants.dllName)]
-        private static extern Image GenImagePerlinNoise(int width, int height, int offsetX, int offsetY, float scale);
+
         [DllImport(Constants.dllName)]
         private static extern Image GenImageCellular(int width, int height, int tileSize);
 
@@ -128,7 +127,7 @@ namespace RaySharp.Textures
         private static extern Texture2D LoadTextureCubemap(Image image, int layout);
 
         [DllImport(Constants.dllName)]
-        private static extern Image GetTextureData(Texture2D texture);
+        private static extern Image LoadImageFromTexture(Texture2D texture);
 
         /// <summary>
         /// Pixel formats
@@ -346,23 +345,6 @@ namespace RaySharp.Textures
         }
 
         /// <summary>
-        /// Generate image: perlin noise
-        /// </summary>
-        /// <param name="dimensions">Image dimensions</param>
-        /// <param name="offset">Offset of perlin noise</param>
-        /// <param name="scale">Amount of noise</param>
-        public Image(Vector2 dimensions, Vector2 offset, float scale)
-        {
-            var image = GenImagePerlinNoise((int)dimensions.X, (int)dimensions.Y, (int)offset.X, (int)offset.Y, scale);
-
-            Data = image.Data;
-            Width = image.Width;
-            Height = image.Height;
-            Mipmaps = image.Mipmaps;
-            Format = image.Format;
-        }
-
-        /// <summary>
         /// Generate image: white noise
         /// </summary>
         /// <param name="dimensions">Image dimensions</param>
@@ -526,7 +508,7 @@ namespace RaySharp.Textures
         /// <param name="texture">A Texture</param>
         public Image(Texture2D texture)
         {
-            var image = GetTextureData(texture);
+            var image = LoadImageFromTexture(texture);
 
             Data = image.Data;
             Width = image.Width;
@@ -760,6 +742,6 @@ namespace RaySharp.Textures
         /// </summary>
         /// <returns>A screenshot of current screen</returns>
         [DllImport(Constants.dllName)]
-        public static extern Image GetScreenData();
+        public static extern Image LoadImageFromScreen();
     }
 }

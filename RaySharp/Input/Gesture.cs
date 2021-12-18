@@ -7,8 +7,7 @@ namespace RaySharp.Input
     {
         [DllImport(Constants.dllName)]
         private static extern Gestures GetGestureDetected();
-        [DllImport(Constants.dllName)]
-        private static extern int GetTouchPointsCount();
+
         [DllImport(Constants.dllName)]
         private static extern float GetGestureHoldDuration();
         [DllImport(Constants.dllName)]
@@ -78,10 +77,7 @@ namespace RaySharp.Input
         /// Get latest detected gesture
         /// </summary>
         public static Gestures GestureDetected => GetGestureDetected();
-        /// <summary>
-        /// Get gesture hold time in milliseconds
-        /// </summary>
-        public static int TouchPointsCount => GetTouchPointsCount();
+
         /// <summary>
         /// Get gesture hold time in milliseconds
         /// </summary>

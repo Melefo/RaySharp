@@ -8,8 +8,6 @@ namespace RaySharp.Input
         [DllImport(Constants.dllName)]
         private static extern bool IsGamepadAvailable(int gamepad);
         [DllImport(Constants.dllName, CharSet = CharSet.Ansi)]
-        private static extern bool IsGamepadName(int gamepad, string name);
-        [DllImport(Constants.dllName, CharSet = CharSet.Ansi)]
         private static extern string GetGamepadName(int gamepad);
         [DllImport(Constants.dllName)]
         private static extern bool IsGamepadButtonPressed(int gamepad, GamepadButton button);
@@ -166,13 +164,6 @@ namespace RaySharp.Input
         /// <returns>1 if successful, 0 if failure</returns>
         [DllImport(Constants.dllName, CharSet = CharSet.Ansi, EntryPoint = "SetGamepadMappings")]
         private static extern int SetMappings(string mappings);
-
-        /// <summary>
-        /// Check gamepad name (if available)
-        /// </summary>
-        /// <param name="name"></param>
-        /// <returns></returns>
-        public bool IsName(string name) => IsGamepadName(Id, name);
 
         /// <summary>
         /// Detect if a gamepad button has been pressed once

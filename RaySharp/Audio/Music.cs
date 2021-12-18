@@ -15,7 +15,7 @@ namespace RaySharp.Audio
         [DllImport(Constants.dllName)]
         private static extern void PlayMusicStream(Music music);
         [DllImport(Constants.dllName)]
-        private static extern bool IsMusicPlaying(Music music);
+        private static extern bool IsMusicStreamPlaying(Music music);
         [DllImport(Constants.dllName)]
         private static extern void UpdateMusicStream(Music music);
         [DllImport(Constants.dllName)]
@@ -57,7 +57,7 @@ namespace RaySharp.Audio
         /// <summary>
         /// Check if music is playing
         /// </summary>
-        public bool IsPlaying => IsMusicPlaying(this);
+        public bool IsPlaying => IsMusicStreamPlaying(this);
         /// <summary>
         /// Set volume for music (1.0 is max level)
         /// </summary>
